@@ -1,9 +1,6 @@
-import Navbar from './Navbar';
-import Poster from './Poster';
-import TBookStore from './TBookstore';
-
-
-// https://www.rainbowkit.com/docs/installation
+import Navbar from '../components/Navbar';
+import Poster from '../components/Poster';
+import TBookStore from '../components/TBookstore';
 
 const Home: React.FC = () => {
     return (

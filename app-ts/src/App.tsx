@@ -1,7 +1,9 @@
 import { Component } from 'react';
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './components/Home';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Home from './pages/Home';
+import Error404 from './pages/Error404';
+import TBookPub from './pages/TBookPub';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
@@ -11,6 +13,7 @@ import {
   polygon,
   sepolia,
 } from 'wagmi/chains';
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
 import {
   QueryClientProvider,
@@ -36,6 +39,9 @@ class App extends Component {
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/view/:tbsn" element={<TBookPub />} />
+                  <Route path="/error" element={<Error404 />} />
+                  <Route path="*" element={<Navigate to="/error" />} />
                 </Routes>
               </BrowserRouter>
 
