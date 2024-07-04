@@ -218,7 +218,7 @@ contract TBookFactory is Ownable, ERC721 {
         }
         toUser.lastLinkId = tokenId;
 
-        _safeTransfer(from, to, tokenId, " ");
+        _safeTransfer(from, to, tokenId, data);
     }
 
     function getPrice(uint256 tbsn) public view returns (uint256) {
