@@ -17,7 +17,7 @@ class HomePage extends Component {
         <NavBar className="my-0" showImage="true" />
         <Poster />
         <div id="store" className="my-5 pt-5">
-          <TBookStore />
+          <TBookStore /> 
         </div>
       </div>
     );
