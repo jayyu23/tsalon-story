@@ -21,7 +21,7 @@ const config = getDefaultConfig({
   appName: 'TSalon',
   projectId: '59b6c756cd5cd9178b50d3bf8329bb43',
   chains: [mainnet, sepolia, polygon],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  ssr: true, // server side rendering (SSR)
 });
 
 const queryClient = new QueryClient();
@@ -32,7 +32,7 @@ class App extends Component {
       <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
-
+              {/* Routes */}
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Home />} />

@@ -16,7 +16,7 @@ const Poster: React.FC<PosterProps> = (props) => {
           height: window.innerHeight,
         }}
       >
-        <div className="w-100 justify-content-center text-center mt-5 pt-5">
+        <div className="w-100 justify-content-center text-center">
           <img src={logoURL} alt="Logo" />
         </div>
         <h1 className="text-white text-center mt-0" style={{ fontSize: 65 }}>

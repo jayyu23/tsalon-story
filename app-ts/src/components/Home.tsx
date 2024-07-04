@@ -1,14 +1,13 @@
+import Navbar from './Navbar';
 import Poster from './Poster';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import '@rainbow-me/rainbowkit/styles.css';
+
 
 // https://www.rainbowkit.com/docs/installation
 
 const Home: React.FC = () => {
     return (
         <div>
-            <ConnectButton />
-            {/* Add your content here */}
+            <Navbar />
             <Poster />
         </div>
     );
