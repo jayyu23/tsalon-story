@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import auth from "../auth/authhandler";
+// import auth from "../auth/authhandler";
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ const NavBar: React.FC = () => {
   const logout = () => {
     sessionStorage.clear();
     setIsLoggedIn(false);
-    auth.isLoggedIn = false;
+    // auth.isLoggedIn = false;
     navigate("/");
   };
 
@@ -86,44 +86,44 @@ const NavBar: React.FC = () => {
     }
   };
 
-  const login = async () => {
-    const loginProcess = async () => {
-      try {
-        const response = await axios.post(auth.getSignInAPI(), { walletAddress: loginAddress });
-        let data = response.data;
-        if (!data.registered) {
-          navigate("/register", { state: { loginAddress } });
-        } else {
-          sessionStorage.setItem("t", data.token);
-          sessionStorage.setItem("username", data.user.username);
-          sessionStorage.setItem("address", data.walletAddress);
-          setIsLoggedIn(true);
-          auth.isLoggedIn = true;
-        }
-      } catch (error) {
-        console.error("Login Error: ", error);
-        alert("Login Error: " + error.message);
-      }
-    };
+//   const login = async () => {
+//     const loginProcess = async () => {
+//       try {
+//         const response = await axios.post(auth.getSignInAPI(), { walletAddress: loginAddress });
+//         let data = response.data;
+//         if (!data.registered) {
+//           navigate("/register", { state: { loginAddress } });
+//         } else {
+//           sessionStorage.setItem("t", data.token);
+//           sessionStorage.setItem("username", data.user.username);
+//           sessionStorage.setItem("address", data.walletAddress);
+//           setIsLoggedIn(true);
+//           auth.isLoggedIn = true;
+//         }
+//       } catch (error) {
+//         console.error("Login Error: ", error);
+//         alert("Login Error: " + error.message);
+//       }
+//     };
 
-    if (chainId !== programChain) {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("wallet_switchEthereumChain", [{ chainId: programChain }]);
-        await loginProcess();
-      } catch (error) {
-        alert(`Switch to ${chainIdToName.get(programChain)} (${programChain}). Current chain not supported.`);
-      }
-    } else {
-      await loginProcess();
-    }
-  };
+//     if (chainId !== programChain) {
+//       try {
+//         const provider = new ethers.providers.Web3Provider(window.ethereum);
+//         await provider.send("wallet_switchEthereumChain", [{ chainId: programChain }]);
+//         await loginProcess();
+//       } catch (error) {
+//         alert(`Switch to ${chainIdToName.get(programChain)} (${programChain}). Current chain not supported.`);
+//       }
+//     } else {
+//       await loginProcess();
+//     }
+//   };
 
-  const loggedInUI = isLoggedIn ? (
-    // JSX for logged in state
-  ) : (
-    // JSX for not logged in state
-  );
+//   const loggedInUI = isLoggedIn ? (
+//     // JSX for logged in state
+//   ) : (
+//     // JSX for not logged in state
+//   );
 
   return (
     <div>
