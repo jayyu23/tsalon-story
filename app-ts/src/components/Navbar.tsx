@@ -23,12 +23,12 @@ const TopNavbar: React.FC = () => {
             width="45px"
           ></img>
         {navItems.map((item) => (
-          <Link key={item.name} to={item.path} className="nav-item text-white">
+          <Link key={item.name} to={item.path} className="nav-item">
             {item.name}
           </Link>
         ))}
         {isConnected && (
-          <Link to="/dashboard" className="nav-item text-white">
+          <Link to="/dashboard" className="nav-item">
             Dashboard
           </Link>
         )}
