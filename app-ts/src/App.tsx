@@ -1,21 +1,15 @@
-import React, { Component } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/home";
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
 
-type AppProps = {}; // Define if there are any props expected
-type AppState = {}; // Define if the component has any state
-
-class App extends Component<AppProps, AppState> {
-  constructor(props: AppProps) {
-    super(props);
-  }
-
+class App extends Component {
   render() {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="*" element={<HomePage />} />  // Redirect all other routes to HomePage for now
+          <Route path="/"  element={<Home />}/>
         </Routes>
       </BrowserRouter>
     );
