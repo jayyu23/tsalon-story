@@ -45,7 +45,7 @@ class App extends Component {
                   <Route path="/" element={<Home />} />
                   <Route path="/view/:tbsn" element={<TBookPub />} />
                   <Route path="/error" element={<Error404 />} />
-                  <Route path="/userhome" element={<UserHome />} />
+                  <Route path="/dashboard" element={<UserHome />} />
                   <Route path="*" element={<Navigate to="/error" />} />
                   
                 </Routes>

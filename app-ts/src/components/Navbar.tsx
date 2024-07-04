@@ -28,7 +28,7 @@ const TopNavbar: React.FC = () => {
           </Link>
         ))}
         {isConnected && (
-          <Link to="/userhome" className="nav-item text-white">
+          <Link to="/dashboard" className="nav-item text-white">
             Dashboard
           </Link>
         )}

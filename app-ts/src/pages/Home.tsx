@@ -7,7 +7,9 @@ const Home: React.FC = () => {
         <div>
             <Navbar />
             <Poster />
+            <div id="store">
             <TBookStore />
+            </div>
         </div>
     );
 }
