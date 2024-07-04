@@ -1,0 +1,63 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import endpoints from "../../auth/endpoints";
+
+function TBookDraft(props) {
+  const tbsn = props.tbsn || 0;
+  const images = ["blue", "green", "orange", "purple"];
+  const imageCover = `/assets/logo_square_${
+    images[Math.floor(Math.random() * images.length)]
+  }.png`;
+
+  const setSession = () => {
+    sessionStorage.setItem("draftTBSN", tbsn);
+  };
+  const deleteDraft = () => {
+    if (tbsn != 0) {
+      axios.delete(endpoints.getDraftAPI(tbsn)).then(
+        (acc) => {
+          window.location.reload();
+        },
+        (rej) => console.log(rej)
+      );
+    }
+  };
+
+  const editableHTML = props.editable ? "inline" : "none";
+  return (
+    <div className="card mx-3" style={{ width: "25rem" }}>
+      <img
+        className="card-img-top"
+        src={props.imageCover || imageCover}
+        alt="TBook Draft Image Cap"
+      ></img>
+
+      <div className="card-body w-100 justify-content-center">
+        <h5 className="card-title" style={{ fontSize: 25 }}>
+          {tbsn ? `#${tbsn}` : ""}
+        </h5>
+        <h5 className="card-title">{props.title || "Untitled TBook Draft"}</h5>
+      </div>
+      <span className="mt-auto w-100 text-center mb-4">
+        <a
+          href="/editor"
+          className={"btn btn-primary m-2 text-center col-5"}
+          onClick={setSession}
+          style={{ borderRadius: 30, display: editableHTML }}
+        >
+          <i className="fa fa-pencil mx-1"></i>Continue
+        </a>
+        <a
+          href="#"
+          className="btn btn-danger px-0 col-4"
+          style={{ borderRadius: 50 }}
+          onClick={deleteDraft}
+        >
+          <i className="fa fa-trash my-auto"></i> Delete
+        </a>
+      </span>
+    </div>
+  );
+}
+
+export default TBookDraft;
