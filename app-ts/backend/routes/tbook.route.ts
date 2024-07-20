@@ -1,38 +1,32 @@
-// import express from "express";
-// import {
-//   update,
-//   read,
-//   deleteDraft,
-//   list,
-//   submitForReview,
-//   publicList,
-//   publicRead,
-//   getFromUsername,
-//   getFromTBSN
-// } from "../controllers/tbook.controller";
-// import { requireSignin, hasAuthorization } from "../controllers/tsalonuser.controller";
-// import { getPrice } from "../controllers/blockchain.controller";
+import express from "express";
+import tbookController from "../controllers/tbook.controller";
+import auth from "../controllers/tsalonuser.controller";
+// import blockchainController from "../controllers/blockchain.controller";
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.route("/api/drafts").post(requireSignin, update);
+router
+  .route("/api/drafts")
+  .post(auth.requireSignin, tbookController.update);
+
+router
+  .route("/api/drafts/:tbsn")
+  .post(auth.requireSignin, auth.hasAuthorization, tbookController.read)
+  .delete(auth.requireSignin, auth.hasAuthorization, tbookController.deleteDraft);
+
+router
+  .route("/api/:username/drafts")
+  .post(auth.requireSignin, auth.hasAuthorization, tbookController.list);
 
 // router
-//   .route("/api/drafts/:tbsn")
-//   .post(requireSignin, hasAuthorization, read)
-//   .delete(deleteDraft);
+//   .route("/api/submitReview")
+//   .post(auth.requireSignin, tbookController.submitForReview);
 
-// router.route("/api/:username/drafts").post(requireSignin, hasAuthorization, list);
+router.route("/api/publications").get(tbookController.publicList);
+router.route("/api/publication/:tbsn").get(tbookController.publicRead);
+// router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
-// router.route("/api/submitReview").post(requireSignin, submitForReview);
+router.param("username", tbookController.getFromUsername);
+router.param("tbsn", tbookController.getFromTBSN);
 
-// router.route("/api/publications").get(publicList);
-
-// router.route("/api/publication/:tbsn").get(publicRead);
-
-// router.route("/api/price/:tbsn").get(getPrice);
-
-// router.param("username", getFromUsername);
-// router.param("tbsn", getFromTBSN);
-
-// export default router;
+export default router;
