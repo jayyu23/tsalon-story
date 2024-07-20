@@ -1,3 +1,7 @@
+/**
+ * The main component of the TSalon application.
+ * Renders the application routes and providers.
+ */
 import { Component } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -17,7 +21,7 @@ import {
   polygon,
   sepolia,
 } from 'wagmi/chains';
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
+// import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
 import {
   QueryClientProvider,
@@ -34,6 +38,10 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 class App extends Component {
+  /**
+   * Renders the TSalon application.
+   * @returns The TSX element representing the TSalon application.
+   */
   render() {
     return (
       <WagmiProvider config={config}>
