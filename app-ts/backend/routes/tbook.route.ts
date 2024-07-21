@@ -26,7 +26,10 @@ router.route("/api/publications").get(tbookController.publicList);
 router.route("/api/publication/:tbsn").get(tbookController.publicRead);
 // router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
+router.route("/api/testPub").get(tbookController.create);
+
 router.param("username", tbookController.getFromUsername);
 router.param("tbsn", tbookController.getFromTBSN);
+
 
 export default router;

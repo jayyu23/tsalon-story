@@ -1,11 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-
-interface AuthRequest extends Request {
-    auth?: {
-        address: string;
-    };
-}
-
 import tsalonuserModel from '../models/tsalonuser.model';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
@@ -13,6 +6,12 @@ import { expressjwt } from 'express-jwt';
 // import blockchainController from './blockchain.controller';
 import tbookModel from '../models/tbook.model';
 // import tsalonmessageController from './tsalonmessage.controller';
+
+interface AuthRequest extends Request {
+    auth?: {
+        address: string;
+    };
+}
 
 const config = {
     jwtSecret: 'jwt',
@@ -25,7 +24,9 @@ const requireSignin = expressjwt({
   });
 
 const signin = (req: Request, res: Response, next: NextFunction) => {
+   
     const walletAddress = req.body.walletAddress.toLowerCase();
+    console.log('signin ', walletAddress);
     if (walletAddress) {
         tsalonuserModel
             .find({ walletAddress })

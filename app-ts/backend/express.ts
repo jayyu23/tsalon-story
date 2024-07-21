@@ -5,9 +5,9 @@ import bodyParser from "body-parser";
 // import cors from "cors";
 import helmet from "helmet";
 
-// import memberRoutes from "./routes/tsalonuser.route.js";
-// import draftRoutes from "./routes/tbook.route.js";
-// import voteRoutes from "./routes/tbookvote.route.js";
+import memberRoutes from "./routes/tsalonuser.route";
+import draftRoutes from "./routes/tbook.route";
+import voteRoutes from "./routes/tbookvote.route";
 
 const app = express();
 
@@ -26,9 +26,9 @@ app.use(helmet());
 
 // app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
-// app.use("/", memberRoutes);
-// app.use("/", draftRoutes);
-// app.use("/", voteRoutes);
+app.use("/", memberRoutes);
+app.use("/", draftRoutes);
+app.use("/", voteRoutes);
 
 // app.use((err, req, res, next) => {
 //   console.log(err);

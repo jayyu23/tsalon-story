@@ -24,7 +24,7 @@ const TBookDraftSchema: Schema = new Schema({
     tbsn: {
         type: Number,
         unique: true,
-        required: [true, "TBook Serial Number (TBSN) is required"],
+        // required: [true, "TBook Serial Number (TBSN) is required"],
     },
     author: { type: String, required: [true, "Author is required"] },
     title: { type: String },
@@ -33,8 +33,8 @@ const TBookDraftSchema: Schema = new Schema({
     createDate: { type: Date, default: new Date() },
     lastSaveDate: { type: Date, default: new Date() },
     coverImage: { type: String },
-    stage: { type: String, default: "draft" },
-    pubMode: { type: String },
+    stage: { type: String, default: "draft" }, // draft, review, publish
+    pubMode: { type: String }, // green, blue
     reviewDate: { type: Date },
     lastReviewDate: { type: Date },
     numVotes: { type: Number, default: 0 },
@@ -47,6 +47,7 @@ TBookDraftSchema.pre<ITBookDraft>("save", function (next) {
         next();
         return;
     }
+    console.log('pre save');
     autoIncrementTBSN("TBookPub", this, next);
 });
 

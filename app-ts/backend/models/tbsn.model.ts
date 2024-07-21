@@ -20,7 +20,11 @@ const autoIncrementTBSN = function (modelName: string, doc: any, next: (err?: an
     counterModel.findByIdAndUpdate(
         modelName,
         { $inc: { seq: 1 } },
-        { new: true, upsert: true });
+        { new: true, upsert: true }).then(counter => {
+            doc.tbsn = counter.seq + offset;
+            next();
+        })
+        .catch(error => next(error));;
 };
 
 export default autoIncrementTBSN;

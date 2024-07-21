@@ -10,7 +10,20 @@ interface IRequestWithDraft extends Request {
     drafts?: any[];
 }
 
+const create = (req: Request, res: Response, next: NextFunction) => {
+    console.log('Create - TEST ONLY');
+    const fields = req.body;
+    fields.author = 'test';
+    fields.stage = 'publish';
+    const draft = new tbookModel(fields);
+    draft.save().then(
+        (acc) => res.status(200).json({ message: 'Draft success', draft: acc }),
+        (rej) => res.status(400).json({ error: rej.message })
+    );
+}
+
 const update = (req: Request, res: Response, next: NextFunction) => {
+    console.log('update');
     const fields = req.body;
 
     if (fields.tbsn === 0) {
@@ -189,6 +202,7 @@ const deleteDraft = (req: IRequestWithDraft, res: Response) => {
 
 export default {
     update,
+    create,
     list,
     read,
     getFromUsername,
