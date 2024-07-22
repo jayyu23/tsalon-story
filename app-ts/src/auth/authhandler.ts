@@ -1,0 +1,116 @@
+import axios from "axios";
+import endpoints from "./endpoints";
+
+class AuthHandler {
+    loggedIn: boolean;
+    accountAddress: string | undefined;
+
+    constructor() {
+        this.loggedIn = false;
+        this.accountAddress = undefined;
+    }
+
+
+    async login(address: string) {
+        // assume connect called. this can be a wallet switch.
+        if (this.loggedIn) {
+            this.logout();
+        }
+
+        this.loggedIn = true;
+        this.accountAddress = address;
+        // Send request to server endpoint to get nonce. Write SessionStorage
+        // TODO: Implement this
+
+        // Request nonce from server
+        const nonceResponse = await axios.post(endpoints.getNonceAPI(), { address });
+        const nonce = nonceResponse.data.nonce;
+
+        // Request user to sign the nonce
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const signature = await signer.signMessage(nonce);
+
+        // Verify signature on server and get auth token
+        const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
+            address,
+            nonce,
+            signature
+        });
+
+        const { token, username } = verifyResponse.data;
+
+        // Store auth data in session storage
+        sessionStorage.setItem("address", address);
+        sessionStorage.setItem("username", username);
+        sessionStorage.setItem("t", token);
+
+        this.loggedIn = true;
+        this.accountAddress = address;
+    }
+
+    logout() {
+        // Assume that disconnect already called.
+        sessionStorage.clear();
+        this.loggedIn = false;
+        this.accountAddress = undefined;
+    }
+
+    getWalletAddress() {
+        return sessionStorage.getItem("address");
+    }
+
+    getUsername() {
+        return sessionStorage.getItem("username");
+    }
+
+    getUsernameLink() {
+        let username = instance.getUsername();
+        if (username) {
+            return username.replace(/ /g, "_").toLowerCase();
+        } else {
+            return "";
+        }
+    }
+
+    getPostAuthData() {
+        // Assume that have the Session Storage Data
+        const token = sessionStorage.getItem("t");
+        let body = {
+            walletAddress: sessionStorage.getItem("address"),
+            username: sessionStorage.getItem("username"),
+        };
+        let config = {
+            headers: { Authorization: `Bearer ${token}` },
+        };
+        return { body: body, config: config };
+    }
+
+    protectRoute() {
+        const token = sessionStorage.getItem("t");
+        if (!token) {
+            instance.redirectToError();
+        } else {
+            // ping the auth-checker backend
+            const authCheckerAPI = endpoints.getAuthAPI();
+            let authData = this.getPostAuthData();
+            axios.post(authCheckerAPI, authData.body, authData.config).then(
+                (acc) => {
+                    // All OK
+                    return;
+                },
+                (rej) => {
+                    instance.redirectToError();
+                }
+            );
+        }
+    }
+
+    redirectToError() {
+        window.location.href = "/error";
+    }
+}
+
+const instance = new AuthHandler();
+
+export default instance;

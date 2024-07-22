@@ -21,6 +21,7 @@
     "@web3-react/walletconnect": "^8.2.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "express-jwt": "^8.4.1",
     "helmet": "^7.1.0",
     "html-react-parser": "^5.1.10",

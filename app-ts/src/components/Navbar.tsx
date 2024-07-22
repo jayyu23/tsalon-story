@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './navbar.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
+import auth from '../auth/authhandler';
 
 const navItems = [
   { name: 'Home', path: '/' },
@@ -10,9 +11,22 @@ const navItems = [
 ];
 
 const logoUrl = "/assets/logo_circle.png";
+const SEPOLIA_CHAIN_ID = 11155111;
 
 const TopNavbar: React.FC = () => {
-  const { isConnected } = useAccount();
+
+  // Navbar handles Login and Logout
+  const { isConnected, address, chain } = useAccount();
+  React.useEffect(() => {
+    if (isConnected && address && chain?.id === SEPOLIA_CHAIN_ID) {
+      console.log("Connected to Sepolia Chain");
+      auth.login(address);
+    } else {
+      console.log("Disconnected from Sepolia Chain");
+      auth.logout();
+    }
+  }, [isConnected, address, chain]);
+  
 
   return (
     <nav className="navbar">

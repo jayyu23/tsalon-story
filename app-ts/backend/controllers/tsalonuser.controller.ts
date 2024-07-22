@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import tsalonuserModel from '../models/tsalonuser.model';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
+import crypto from 'crypto';
 // import config from '../../config/config';
 // import blockchainController from './blockchain.controller';
 import tbookModel from '../models/tbook.model';
@@ -13,6 +14,9 @@ interface AuthRequest extends Request {
     };
 }
 
+// In-memory store for nonces. In production, use a database.
+const nonceStore: { [address: string]: string } = {};
+
 const config = {
     jwtSecret: 'jwt',
 }
@@ -22,6 +26,21 @@ const requireSignin = expressjwt({
     requestProperty: "auth",
     algorithms: ["HS256"],
   });
+
+const getNonce = (req: Request, res: Response) => {
+    const { address } = req.body;
+
+    if (!address) {
+        return res.status(400).json({ error: 'Address is required' });
+    }
+    // Generate a random nonce
+    const nonce = crypto.randomBytes(32).toString('hex');
+
+    // Store the nonce with the address
+    nonceStore[address] = nonce;
+
+    res.json({ nonce });
+};
 
 const signin = (req: Request, res: Response, next: NextFunction) => {
    
@@ -184,6 +203,7 @@ const getGreenTokens = (req: Request, res: Response) => {
 export default {
     createUser,
     signin,
+    getNonce,
     requireSignin,
     hasAuthorization,
     passedAuthentication,
