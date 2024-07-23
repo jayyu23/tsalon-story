@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route("/api/signin").post(tsalonuserController.signin);
 
-router.route("api/getNonce").post(tsalonuserController.getNonce);
+router.route("/api/getNonce").post(tsalonuserController.getNonce);
 
 router
   .route("/api/auth")

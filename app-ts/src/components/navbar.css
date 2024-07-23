@@ -15,11 +15,37 @@
 .nav-item {
   margin: 0 1rem;
   color: white;
-  text-decoration: none; /* Ensure no underline on links */
+  text-decoration: none;
 }
 
 .nav-item:hover {
   color: #bbb;
+}
+
+.connectDetails {
+  display: flex;
+  align-items: center;
+}
+
+.connect-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.login-icon {
+  margin-left: 10px;
+  background: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-radius: 15px;
+  cursor: pointer;
+  color: #333;
+}
+
+.login-icon:hover {
+  color: #007bff;
 }
 
 @media (max-width: 768px) {

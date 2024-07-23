@@ -1,12 +1,10 @@
-import { get } from "lodash";
-
 // One-stop-shop to handle endpoints for API calls.
 class EndPoints {
     baseURL: string;
     urlMap: { [key: string]: string; };
 
     constructor() {
-      this.baseURL = process.env.BASE_URL || "https://tsalon.io/api/";
+      this.baseURL =  "http://localhost:8000/api/"; // process.env.BASE_URL || "https://tsalon.io/api/";
       this.urlMap = {
         signin: "signin",
         auth: "auth",

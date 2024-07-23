@@ -2,8 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './navbar.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
+import { useAccount, useSignMessage } from 'wagmi';
 import auth from '../auth/authhandler';
+import { FaSignInAlt } from 'react-icons/fa'; 
 
 const navItems = [
   { name: 'Home', path: '/' },
@@ -17,6 +18,7 @@ const TopNavbar: React.FC = () => {
 
   // Navbar handles Login and Logout
   const { isConnected, address, chain } = useAccount();
+
   React.useEffect(() => {
     if (isConnected && address && chain?.id === SEPOLIA_CHAIN_ID) {
       console.log("Connected to Sepolia Chain");
@@ -47,7 +49,14 @@ const TopNavbar: React.FC = () => {
           </Link>
         )}
       </div>
+      <div className="connectDetails">
       <ConnectButton />
+      {isConnected && address && (
+          <Link to="/profile" className="login-icon">
+            <FaSignInAlt size={24} />
+          </Link>
+        )}
+        </div>
     </nav>
   );
 };

@@ -10,8 +10,8 @@ class AuthHandler {
         this.accountAddress = undefined;
     }
 
-
     async login(address: string) {
+        console.log("Login called");
         // assume connect called. this can be a wallet switch.
         if (this.loggedIn) {
             this.logout();
@@ -20,30 +20,22 @@ class AuthHandler {
         this.loggedIn = true;
         this.accountAddress = address;
         // Send request to server endpoint to get nonce. Write SessionStorage
-        // TODO: Implement this
+        const response = await axios.post(endpoints.getNonceAPI(), { address });
+        const nonce = response.data;
 
-        // Request nonce from server
-        const nonceResponse = await axios.post(endpoints.getNonceAPI(), { address });
-        const nonce = nonceResponse.data.nonce;
+        // // Verify signature on server and get auth token
+        // const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
+        //     address,
+        //     nonce,
+        //     signature
+        // });
 
-        // Request user to sign the nonce
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const signature = await signer.signMessage(nonce);
+        // const { token, username } = verifyResponse.data;
 
-        // Verify signature on server and get auth token
-        const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
-            address,
-            nonce,
-            signature
-        });
-
-        const { token, username } = verifyResponse.data;
-
-        // Store auth data in session storage
-        sessionStorage.setItem("address", address);
-        sessionStorage.setItem("username", username);
-        sessionStorage.setItem("t", token);
+        // // Store auth data in session storage
+        // sessionStorage.setItem("address", address);
+        // sessionStorage.setItem("username", username);
+        // sessionStorage.setItem("t", token);
 
         this.loggedIn = true;
         this.accountAddress = address;

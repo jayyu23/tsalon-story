@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 // import cookieParser from "cookie-parser";
 // import compress from "compression";
-// import cors from "cors";
+import cors from "cors";
 import helmet from "helmet";
 
 import memberRoutes from "./routes/tsalonuser.route";
@@ -22,7 +22,7 @@ app.use(
 // app.use(cookieParser());
 // app.use(compress());
 app.use(helmet());
-// app.use(cors());
+app.use(cors());
 
 // app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 

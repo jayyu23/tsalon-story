@@ -15,18 +15,16 @@ import UserHome from './pages/UserHome';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-// Chains
-import {
-  mainnet,
-  polygon,
-  sepolia,
-} from 'wagmi/chains';
-// import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
 import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
+
+import {
+  sepolia,
+} from 'wagmi/chains';
+
 
 const config = getDefaultConfig({
   appName: 'TSalon',
@@ -34,6 +32,7 @@ const config = getDefaultConfig({
   chains: [sepolia],
   ssr: true, // server side rendering (SSR)
 });
+
 
 const queryClient = new QueryClient();
 

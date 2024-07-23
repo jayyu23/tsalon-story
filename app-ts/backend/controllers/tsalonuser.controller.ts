@@ -28,6 +28,7 @@ const requireSignin = expressjwt({
   });
 
 const getNonce = (req: Request, res: Response) => {
+    console.log('getNonce');
     const { address } = req.body;
 
     if (!address) {
