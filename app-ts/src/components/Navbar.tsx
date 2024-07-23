@@ -18,17 +18,32 @@ const TopNavbar: React.FC = () => {
 
   // Navbar handles Login and Logout
   const { isConnected, address, chain } = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  
 
   React.useEffect(() => {
     if (isConnected && address && chain?.id === SEPOLIA_CHAIN_ID) {
       console.log("Connected to Sepolia Chain");
-      auth.login(address);
+      auth.requestSession(address);
     } else {
       console.log("Disconnected from Sepolia Chain");
       auth.logout();
     }
   }, [isConnected, address, chain]);
-  
+
+  const handleLogin = async () => {
+    if (address) {
+      try {
+        const nonce = auth.getNonce();
+        const message = `Sign this message to log in. Nonce: ${nonce}`;
+        const signature = await signMessageAsync({ message });
+        // await auth.login(address, signature);
+        console.log('Logged in successfully');
+      } catch (error) {
+        console.error('Login failed:', error);
+      }
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -52,9 +67,9 @@ const TopNavbar: React.FC = () => {
       <div className="connectDetails">
       <ConnectButton />
       {isConnected && address && (
-          <Link to="/profile" className="login-icon">
-            <FaSignInAlt size={24} />
-          </Link>
+          <button className="login-icon" onClick={handleLogin}>
+          <FaSignInAlt size={24} />
+        </button>
         )}
         </div>
     </nav>

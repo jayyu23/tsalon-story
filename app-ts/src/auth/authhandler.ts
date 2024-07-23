@@ -1,18 +1,25 @@
 import axios from "axios";
 import endpoints from "./endpoints";
 
+// Tracks the session storage and the auth state of the user.
 class AuthHandler {
     loggedIn: boolean;
     accountAddress: string | undefined;
+    nonce: string;
 
     constructor() {
         this.loggedIn = false;
         this.accountAddress = undefined;
+        this.nonce = "";
     }
 
-    async login(address: string) {
+    getNonce() {
+        return this.nonce;
+    }
+
+    async requestSession(address: string) {
         console.log("Login called");
-        // assume connect called. this can be a wallet switch.
+        // assume connect called. this can be a wallet switch. Requests the nonce ONLY.
         if (this.loggedIn) {
             this.logout();
         }
@@ -21,7 +28,9 @@ class AuthHandler {
         this.accountAddress = address;
         // Send request to server endpoint to get nonce. Write SessionStorage
         const response = await axios.post(endpoints.getNonceAPI(), { address });
-        const nonce = response.data;
+        const nonce = response.data.nonce;
+        this.nonce = nonce;
+        console.log("Nonce: ", nonce);
 
         // // Verify signature on server and get auth token
         // const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
