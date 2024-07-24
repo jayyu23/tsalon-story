@@ -17,20 +17,43 @@ class AuthHandler {
         return this.nonce;
     }
 
-    async requestSession(address: string) {
+    async login(address: string, signMessageAsync: any) {
         console.log("Login called");
         // assume connect called. this can be a wallet switch. Requests the nonce ONLY.
         if (this.loggedIn) {
             this.logout();
         }
 
-        this.loggedIn = true;
-        this.accountAddress = address;
-        // Send request to server endpoint to get nonce. Write SessionStorage
-        const response = await axios.post(endpoints.getNonceAPI(), { address });
-        const nonce = response.data.nonce;
-        this.nonce = nonce;
-        console.log("Nonce: ", nonce);
+        try {
+            this.loggedIn = true;
+            this.accountAddress = address;
+            // Send request to server endpoint to get nonce. Write SessionStorage
+            const response = await axios.post(endpoints.getNonceAPI(), { address });
+            const nonce = response.data.nonce;
+            this.nonce = nonce;
+            console.log("Nonce: ", nonce);
+
+            const signMessageVariables = { message: this.nonce };
+            const signMessageOptions = {
+              onSettled: (data: string, error: Error) => {
+                if (error) {
+                  console.error('Sign message settled with error:', error);
+                  throw error;
+                } else {
+                  console.log('Sign message settled successfully:', data);
+                }
+              },
+            };
+            const signedMessage = await signMessageAsync(signMessageVariables, signMessageOptions);
+            console.log('Signed message data:', signedMessage);
+            this.accountAddress = address;
+
+    
+        } catch (error) {
+            this.logout();
+            console.log("Login failed:", error);
+            throw Error("Login failed");
+        }
 
         // // Verify signature on server and get auth token
         // const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
@@ -49,6 +72,36 @@ class AuthHandler {
         this.loggedIn = true;
         this.accountAddress = address;
     }
+
+
+
+    // async requestSession(address: string) {
+    //     console.log("Login called");
+    //     // assume connect called. this can be a wallet switch. Requests the nonce ONLY.
+    //     if (this.loggedIn) {
+    //         this.logout();
+    //     }
+
+    //     this.loggedIn = true;
+    //     this.accountAddress = address
+
+    //     // // Verify signature on server and get auth token
+    //     // const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
+    //     //     address,
+    //     //     nonce,
+    //     //     signature
+    //     // });
+
+    //     // const { token, username } = verifyResponse.data;
+
+    //     // // Store auth data in session storage
+    //     // sessionStorage.setItem("address", address);
+    //     // sessionStorage.setItem("username", username);
+    //     // sessionStorage.setItem("t", token);
+
+    //     this.loggedIn = true;
+    //     this.accountAddress = address;
+    // }
 
     logout() {
         // Assume that disconnect already called.

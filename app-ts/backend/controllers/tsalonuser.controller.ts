@@ -21,6 +21,8 @@ const config = {
     jwtSecret: 'jwt',
 }
 
+const formatDate = (date: Date) => date.toISOString()
+
 const requireSignin = expressjwt({
     secret: config.jwtSecret,
     requestProperty: "auth",
@@ -44,7 +46,7 @@ const getNonce = (req: Request, res: Response) => {
 };
 
 const signin = (req: Request, res: Response, next: NextFunction) => {
-   
+   // Verify the signature.
     const walletAddress = req.body.walletAddress.toLowerCase();
     console.log('signin ', walletAddress);
     if (walletAddress) {
