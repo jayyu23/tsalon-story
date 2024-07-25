@@ -3,6 +3,7 @@ import tsalonuserModel from '../models/tsalonuser.model';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import crypto from 'crypto';
+
 // import config from '../../config/config';
 // import blockchainController from './blockchain.controller';
 import tbookModel from '../models/tbook.model';
@@ -14,14 +15,11 @@ interface AuthRequest extends Request {
     };
 }
 
-// In-memory store for nonces. In production, use a database.
-const nonceStore: { [address: string]: string } = {};
+
 
 const config = {
     jwtSecret: 'jwt',
 }
-
-const formatDate = (date: Date) => date.toISOString()
 
 const requireSignin = expressjwt({
     secret: config.jwtSecret,
@@ -39,46 +37,158 @@ const getNonce = (req: Request, res: Response) => {
     // Generate a random nonce
     const nonce = crypto.randomBytes(32).toString('hex');
 
-    // Store the nonce with the address
-    nonceStore[address] = nonce;
-
-    res.json({ nonce });
+    // Store the nonce with the address. If no record, then create one.
+    tsalonuserModel.find({ walletAddress: address }).exec().then(
+        (acc) => {
+            if (acc.length === 0) {
+                tsalonuserModel.create({ walletAddress: address, nonceMessage: nonce }).then(
+                    (acc) => {
+                        console.log('nonce saved');
+                        res.json({ nonce });
+                    },
+                    (rej) => {
+                        console.log('nonce not saved');
+                        res.status(400).json({ error: rej });
+                    }
+                );
+            } else {
+                tsalonuserModel.findOneAndUpdate({ walletAddress: address }, { nonceMessage: nonce }).exec().then(
+                    (acc) => {
+                        console.log('nonce saved');
+                        res.json({ nonce });
+                    },
+                    (rej) => {
+                        console.log('nonce not saved');
+                        res.status(400).json({ error: rej });
+                    }
+                );
+            }
+        },
+        (rej) => res.status(400).json({ error: rej })
+    );
 };
 
-const signin = (req: Request, res: Response, next: NextFunction) => {
-   // Verify the signature.
-    const walletAddress = req.body.walletAddress.toLowerCase();
-    console.log('signin ', walletAddress);
-    if (walletAddress) {
-        tsalonuserModel
-            .find({ walletAddress })
-            .exec()
-            .then(
-                (acc) => {
-                    const results = acc;
-                    if (results.length === 0) {
-                        return res.status(200).json({ walletAddress, registered: false });
-                    } else {
-                        const token = jwt.sign(
-                            { address: walletAddress },
-                            config.jwtSecret
-                        );
-                        res.cookie('t', token, { expires: new Date(Date.now() + 9999) });
+const signin = async (req: Request, res: Response, next: NextFunction) => {
+    // Verify the signature.
+    const address = req.body.address;
+    if (address === undefined) {
+        return res.status(400).json({ error: 'Address is required' });
+    }
+    console.log(address);
+    try {
+        const results = await tsalonuserModel.findOne({ walletAddress: address }).exec();
+        if (results) {
+            const nonce = results.nonceMessage;
+            const signature = req.body.signature;
+            // Dynamic import
+            const { verifyMessage } = await import('@wagmi/core');
+            const { wagmi_config } = await import('./wagmi-config');
 
-                        return res.status(200).json({
-                            token,
-                            walletAddress,
-                            registered: true,
-                            user: results[0],
-                        });
-                    }
-                },
-                (rej) => res.status(400).json({ error: rej })
+            console.log('nonce', nonce);
+            console.log('signature', signature);
+            const verified = await verifyMessage(wagmi_config, {
+                message: nonce,
+                signature,
+                address,
+            });
+            // const verified = useVerifyMessage({
+            //     message: nonce,
+            //     signature,
+            //     address,
+            // });
+            console.log('verified', verified);
+            const walletAddress = req.body.walletAddress.toLowerCase();
+            const token = jwt.sign(
+                { address: walletAddress },
+                config.jwtSecret
             );
-    } else {
-        return res.status(400).json({ error: 'Empty wallet address in request' });
+            res.cookie('t', token, { expires: new Date(Date.now() + 9999) });
+
+            return res.status(200).json({
+                token,
+                walletAddress,
+                registered: true,
+                user: results,
+            });
+        } else {
+            return res.status(400).json({ error: 'Address not found' });
+        }
+    } catch (error) {
+        return res.status(400).json({ error });
     }
 };
+
+// const signin = async (req: Request, res: Response, next: NextFunction) => {
+//     // Verify the signature.
+//     const address = req.body.address;
+//     if (address === undefined) {
+//         return res.status(400).json({ error: 'Address is required' });
+//     }
+//     console.log(address);
+//     tsalonuserModel.findOne({ walletAddress: address }).exec().then(
+//         (results) => {
+//             if (results) {
+//                 const nonce = results.nonceMessage;
+//                 const signature = req.body.signature;
+//                 verifyMessage(wagmi_config,
+//                     {
+//                         message: nonce,
+//                         signature,
+//                         address,
+//                     }).then((verified) => {
+//                         console.log('verified', verified);
+//                         const walletAddress = req.body.walletAddress.toLowerCase();
+//                         const token = jwt.sign(
+//                             { address: walletAddress },
+//                             config.jwtSecret
+//                         );
+//                         res.cookie('t', token, { expires: new Date(Date.now() + 9999) });
+
+//                         return res.status(200).json({
+//                             token,
+//                             walletAddress,
+//                             registered: true,
+//                             user: results,
+//                         });
+//                     },
+//                         (rej) => { return res.status(400).json({ error: rej }) });
+//             } else {
+//                 return res.status(400).json({ error: 'Address not found' });
+//             }
+//         }
+//     )
+
+    // console.log('signin ', walletAddress);
+    // if (walletAddress) {
+    //     tsalonuserModel
+    //         .find({ walletAddress })
+    //         .exec()
+    //         .then(
+    //             (acc) => {
+    //                 const results = acc;
+    //                 if (results.length === 0) {
+    //                     return res.status(200).json({ walletAddress, registered: false });
+    //                 } else {
+    //                     const token = jwt.sign(
+    //                         { address: walletAddress },
+    //                         config.jwtSecret
+    //                     );
+    //                     res.cookie('t', token, { expires: new Date(Date.now() + 9999) });
+
+    //                     return res.status(200).json({
+    //                         token,
+    //                         walletAddress,
+    //                         registered: true,
+    //                         user: results[0],
+    //                     });
+    //                 }
+    //             },
+    //             (rej) => res.status(400).json({ error: rej })
+    //         );
+    // } else {
+    //     return res.status(400).json({ error: 'Empty wallet address in request' });
+    // }
+// };
 
 const createUser = (req: Request, res: Response, next: NextFunction) => {
     const { username, walletAddress } = req.body;

@@ -39,20 +39,26 @@ class AuthHandler {
                 if (error) {
                   console.error('Sign message settled with error:', error);
                   throw error;
-                } else {
-                  console.log('Sign message settled successfully:', data);
                 }
               },
             };
             const signedMessage = await signMessageAsync(signMessageVariables, signMessageOptions);
-            console.log('Signed message data:', signedMessage);
             this.accountAddress = address;
+            await axios.post(endpoints.getSignInAPI(), { address, signature: signedMessage }).then(
+                (acc) => {
+                    console.log("Login successful");
+                    sessionStorage.setItem("address", address);
+                    sessionStorage.setItem("t", acc.data.token); // JWT Session Token
+                },
+                (rej) => {
+                    throw rej;
+                }
+            );
 
-    
         } catch (error) {
             this.logout();
             console.log("Login failed:", error);
-            throw Error("Login failed");
+            throw error;
         }
 
         // // Verify signature on server and get auth token

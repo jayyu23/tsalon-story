@@ -11,6 +11,7 @@ interface ITSalonUser extends Document {
     votesUsed: number;
     lastVoted?: Date;
     greenTokens: number;
+    nonceMessage: string; // Nonce. Refreshes every new login
 }
 
 const TSalonUserSchema: Schema = new Schema({
@@ -55,6 +56,9 @@ const TSalonUserSchema: Schema = new Schema({
     greenTokens: {
         type: Number,
         default: 0,
+    },
+    nonceMessage: {
+        type: String,
     },
 });
 
