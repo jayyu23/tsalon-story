@@ -109,6 +109,7 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const hasAuthorization = (req: AuthRequest, res: Response, next: NextFunction) => {
+    console.log('hasAuthorization', req.body.walletAddress, req.auth);
     const authorized =
         req.body.walletAddress &&
         req.auth &&

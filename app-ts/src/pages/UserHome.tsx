@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useAccount, useDisconnect } from "wagmi";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import Nologin from "../components/Nologin";
 import Sidebar from "../components/Sidebar";
+import Sidebar2 from "../components/Sidebar2";
+import AuthWrapper from "../components/AuthWrapper";
 
 const UserHome: React.FC = () => {
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-  const [isUserConnected, setIsUserConnected] = useState(isConnected);
   const [stage1, setStage1] = useState([]);
   const [stage2, setStage2] = useState([]);
-
-  useEffect(() => {
-    setIsUserConnected(isConnected);
-  }, [isConnected]);
 
   const pageHTML = (
     <div className="h-100 w-100">
@@ -21,7 +14,7 @@ const UserHome: React.FC = () => {
       <div className="container-fluid h-100 mx-0 px-0 w-100">
         <div className="row h-100 w-100 mx-0 px-0">
           <div className="col-md-3 col-xs-12 px-0 mx-0">
-            <Sidebar active={2} />
+            <Sidebar2 initialActiveItem="Dashboard"/>
           </div>
 
           <div
@@ -105,20 +98,10 @@ const UserHome: React.FC = () => {
     </div>
   );
 
-
-
-
-
   return (
-    <div>
-      {isUserConnected && address ? (
-        <div>
-            {pageHTML}
-        </div>
-      ) : (
-        <Nologin />
-      )}
-    </div>
+    <AuthWrapper>
+      {pageHTML}
+    </AuthWrapper>
   );
 };
 

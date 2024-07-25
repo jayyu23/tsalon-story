@@ -60,57 +60,13 @@ class AuthHandler {
             console.log("Login failed:", error);
             throw error;
         }
-
-        // // Verify signature on server and get auth token
-        // const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
-        //     address,
-        //     nonce,
-        //     signature
-        // });
-
-        // const { token, username } = verifyResponse.data;
-
-        // // Store auth data in session storage
-        // sessionStorage.setItem("address", address);
-        // sessionStorage.setItem("username", username);
-        // sessionStorage.setItem("t", token);
-
         this.loggedIn = true;
         this.accountAddress = address;
     }
 
-
-
-    // async requestSession(address: string) {
-    //     console.log("Login called");
-    //     // assume connect called. this can be a wallet switch. Requests the nonce ONLY.
-    //     if (this.loggedIn) {
-    //         this.logout();
-    //     }
-
-    //     this.loggedIn = true;
-    //     this.accountAddress = address
-
-    //     // // Verify signature on server and get auth token
-    //     // const verifyResponse = await axios.post(endpoints.getSignInAPI(), {
-    //     //     address,
-    //     //     nonce,
-    //     //     signature
-    //     // });
-
-    //     // const { token, username } = verifyResponse.data;
-
-    //     // // Store auth data in session storage
-    //     // sessionStorage.setItem("address", address);
-    //     // sessionStorage.setItem("username", username);
-    //     // sessionStorage.setItem("t", token);
-
-    //     this.loggedIn = true;
-    //     this.accountAddress = address;
-    // }
-
     logout() {
         // Assume that disconnect already called.
+        console.log("Logout called");
         sessionStorage.clear();
         this.loggedIn = false;
         this.accountAddress = undefined;
@@ -120,8 +76,9 @@ class AuthHandler {
         return sessionStorage.getItem("address");
     }
 
-    getUsername() {
-        return sessionStorage.getItem("username");
+    getUsername(): string {
+        // Currently returns address
+        return this.accountAddress ? this.accountAddress : "";
     }
 
     getUsernameLink() {
@@ -138,7 +95,7 @@ class AuthHandler {
         const token = sessionStorage.getItem("t");
         let body = {
             walletAddress: sessionStorage.getItem("address"),
-            username: sessionStorage.getItem("username"),
+            // username: sessionStorage.getItem("username"),
         };
         let config = {
             headers: { Authorization: `Bearer ${token}` },
@@ -160,6 +117,7 @@ class AuthHandler {
                     return;
                 },
                 (rej) => {
+                    // this.logout();
                     instance.redirectToError();
                 }
             );

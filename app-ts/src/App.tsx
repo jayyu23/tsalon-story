@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Error404 from './pages/Error404';
 import TBookPub from './pages/TBookPub';
 import UserHome from './pages/UserHome';
+import PrivateShelf from './pages/PrivateShelf';
 
 // Import Wagmi
 import '@rainbow-me/rainbowkit/styles.css';
@@ -54,6 +55,7 @@ class App extends Component {
                   <Route path="/error" element={<Error404 />} />
                   <Route path="/dashboard" element={<UserHome />} />
                   <Route path="*" element={<Navigate to="/error" />} />
+                  <Route path="/collections" element={<PrivateShelf />} />
                   
                 </Routes>
               </BrowserRouter>

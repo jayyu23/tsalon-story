@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface SidebarProps {
   active?: number;
@@ -14,7 +14,8 @@ interface SidebarOption {
 
 const Sidebar: React.FC<SidebarProps> = ({ active = -1 }) => {
   const username = sessionStorage.getItem("username")?.replace(/ /g, "_").toLowerCase() || "";
-  
+  const [collapsed, setCollapsed] = useState(false);
+
   const sidebarOptions: SidebarOption[] = [
     {
       index: 0,
@@ -22,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active = -1 }) => {
       link: "/",
       icon: "fa fa-lines-leaning",
       target: "_blank",
-    }, 
+    },
     {
       index: 1,
       text: "Dashboard",
@@ -40,18 +41,34 @@ const Sidebar: React.FC<SidebarProps> = ({ active = -1 }) => {
     { index: 5, text: "Settings", link: "/settings", icon: "fa fa-cog" },
   ];
 
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+
   return (
-    <div className="h-100" style={{ minWidth: 100 }}>
+    <div className={`sidebar h-100 ${collapsed ? 'sidebar-collapsed' : ''}`}>
       <div className="d-flex flex-column flex-shrink-0 p-3 text-white bg-secondary h-100">
-        <a
-          href="#"
-          className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
-        >
-          <span className="fs-4">
-            <i className="fa fa-bars mx-3 mb-4 mt-5 pt-auto"></i>
-            Menu
-          </span>
-        </a>
+        <div className="d-flex justify-content-between align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+          <a
+            href="#"
+            className="d-flex align-items-center text-white text-decoration-none"
+            onClick={toggleCollapse}
+          >
+            <span className="fs-4">
+              <i className={`fa ${collapsed ? 'fa-bars' : 'fa-times'} mx-3 mb-4 mt-5 pt-auto`}></i>
+              {collapsed ? '' : 'Menu'}
+            </span>
+          </a>
+          {collapsed && (
+            <button onClick={toggleCollapse} className="btn btn-primary ml-auto">
+              <i className="fa fa-bars"></i>
+            </button>
+          )}
+        </div>
+        <div className="text-center mb-4">
+          <img src={`https://avatars.dicebear.com/api/initials/${username}.svg`} alt="Avatar" className="rounded-circle" width="50" height="50" />
+          {!collapsed && <h6 className="mt-2">{username}</h6>}
+        </div>
         <ul className="nav nav-pills flex-column mb-auto">
           {sidebarOptions.map((data) => (
             <li key={data.index} className="nav-item my-1">
@@ -64,9 +81,10 @@ const Sidebar: React.FC<SidebarProps> = ({ active = -1 }) => {
                     : "nav-link text-white"
                 }
                 aria-current="page"
+                title={collapsed ? data.text : ''}
               >
                 <i className={data.icon + " mx-2"}></i>
-                {data.text}
+                {!collapsed && data.text}
               </a>
             </li>
           ))}
