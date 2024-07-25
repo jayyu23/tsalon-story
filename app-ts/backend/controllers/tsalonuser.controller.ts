@@ -3,6 +3,7 @@ import tsalonuserModel from '../models/tsalonuser.model';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import crypto from 'crypto';
+import { verifyMessage } from 'viem'
 
 // import config from '../../config/config';
 // import blockchainController from './blockchain.controller';
@@ -81,32 +82,26 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
             const nonce = results.nonceMessage;
             const signature = req.body.signature;
             // Dynamic import
-            const { verifyMessage } = await import('@wagmi/core');
-            const { wagmi_config } = await import('./wagmi-config');
-
             console.log('nonce', nonce);
             console.log('signature', signature);
-            const verified = await verifyMessage(wagmi_config, {
+            const verified = await verifyMessage({
+                address: address,
                 message: nonce,
                 signature,
-                address,
             });
-            // const verified = useVerifyMessage({
-            //     message: nonce,
-            //     signature,
-            //     address,
-            // });
             console.log('verified', verified);
-            const walletAddress = req.body.walletAddress.toLowerCase();
+            if (!verified) {
+                return res.status(400).json({ error: 'Login error' });
+            }
             const token = jwt.sign(
-                { address: walletAddress },
+                { address: address },
                 config.jwtSecret
             );
+            console.log('token', token);
             res.cookie('t', token, { expires: new Date(Date.now() + 9999) });
-
             return res.status(200).json({
                 token,
-                walletAddress,
+                address,
                 registered: true,
                 user: results,
             });
