@@ -6,7 +6,7 @@ import UserCollection from "../components/Collection";
 import AuthWrapper from "../components/AuthWrapper";
 
 const PrivateShelf: React.FC = () => {
-  const username = auth.getUsername();
+  const username = auth.getWalletAddress();
 
   return (
     <AuthWrapper>
@@ -20,7 +20,7 @@ const PrivateShelf: React.FC = () => {
             className="col-xs-12 col-md-9 m-0 p-0"
             style={{ minHeight: window.innerHeight }}
           >
-            <UserCollection username={username} disableLoad={true} />
+            <UserCollection username={username != null ? username : ""} disableLoad={true} />
           </div>
         </div>
       </div>

@@ -3,13 +3,9 @@ import endpoints from "./endpoints";
 
 // Tracks the session storage and the auth state of the user.
 class AuthHandler {
-    loggedIn: boolean;
-    accountAddress: string | undefined;
     nonce: string;
 
     constructor() {
-        this.loggedIn = false;
-        this.accountAddress = undefined;
         this.nonce = "";
     }
 
@@ -20,13 +16,11 @@ class AuthHandler {
     async login(address: string, signMessageAsync: any) {
         console.log("Login called");
         // assume connect called. this can be a wallet switch. Requests the nonce ONLY.
-        if (this.loggedIn) {
+        if (this.isLoggedIn()) {
             this.logout();
         }
 
         try {
-            this.loggedIn = true;
-            this.accountAddress = address;
             // Send request to server endpoint to get nonce. Write SessionStorage
             const response = await axios.post(endpoints.getNonceAPI(), { address });
             const nonce = response.data.nonce;
@@ -43,10 +37,9 @@ class AuthHandler {
               },
             };
             const signedMessage = await signMessageAsync(signMessageVariables, signMessageOptions);
-            this.accountAddress = address;
             await axios.post(endpoints.getSignInAPI(), { address, signature: signedMessage }).then(
                 (acc) => {
-                    console.log("Login successful");
+                    console.log("Authhandler Login successful");
                     sessionStorage.setItem("address", address);
                     sessionStorage.setItem("t", acc.data.token); // JWT Session Token
                 },
@@ -60,35 +53,30 @@ class AuthHandler {
             console.log("Login failed:", error);
             throw error;
         }
-        this.loggedIn = true;
-        this.accountAddress = address;
     }
 
     logout() {
         // Assume that disconnect already called.
         console.log("Logout called");
         sessionStorage.clear();
-        this.loggedIn = false;
-        this.accountAddress = undefined;
+    }
+
+    isLoggedIn() {
+        return sessionStorage.getItem("t") ? true : false;
     }
 
     getWalletAddress() {
-        return sessionStorage.getItem("address");
+        return sessionStorage.getItem("address") ? sessionStorage.getItem("address") : "";
     }
 
-    getUsername(): string {
-        // Currently returns address
-        return this.accountAddress ? this.accountAddress : "";
-    }
-
-    getUsernameLink() {
-        let username = instance.getUsername();
-        if (username) {
-            return username.replace(/ /g, "_").toLowerCase();
-        } else {
-            return "";
-        }
-    }
+    // getUsernameLink() {
+    //     let username = instance.getUsername();
+    //     if (username) {
+    //         return username.replace(/ /g, "_").toLowerCase();
+    //     } else {
+    //         return "";
+    //     }
+    // }
 
     getPostAuthData() {
         // Assume that have the Session Storage Data
