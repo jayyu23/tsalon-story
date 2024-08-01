@@ -1,12 +1,11 @@
 import React from "react";
-import auth from "../auth/authhandler";
 import NavBar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import UserCollection from "../components/Collection";
 import AuthWrapper from "../components/ProtectedRoute";
 
 const PrivateShelf: React.FC = () => {
-  const username = auth.getWalletAddress();
+  const username = JSON.parse(window.sessionStorage.session).address; // Read this from sessionStorage
 
   return (
     <AuthWrapper>
@@ -14,7 +13,7 @@ const PrivateShelf: React.FC = () => {
         <NavBar />
         <div className="row h-100 w-100">
           <div className="col-md-3 col-xs-12">
-            <Sidebar initialActiveItem="Dashboard" />
+            <Sidebar initialActiveItem="Collections" />
           </div>
           <div
             className="col-xs-12 col-md-9 m-0 p-0"
