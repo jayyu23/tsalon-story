@@ -2,14 +2,14 @@ import React from "react";
 import NavBar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import UserCollection from "../components/Collection";
-import AuthWrapper from "../components/ProtectedRoute";
+import AuthWrapper from "../components/AuthWrapper";
 
 const PrivateShelf: React.FC = () => {
   const username = JSON.parse(window.sessionStorage.session).address; // Read this from sessionStorage
 
   return (
     <AuthWrapper>
-      <div className="container h-100 mx-0 px-0 mt-3 w-100">
+      <div className="h-100 mx-0 px-0 w-100">
         <NavBar />
         <div className="row h-100 w-100">
           <div className="col-md-3 col-xs-12">

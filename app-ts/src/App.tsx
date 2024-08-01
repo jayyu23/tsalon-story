@@ -9,7 +9,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Error404 from './pages/Error404';
 import TBookPub from './pages/TBookPub';
-import UserHome from './pages/UserHome';
+import Drafts from './pages/Drafts';
+import Notifications from './pages/Notifications';
 import PrivateShelf from './pages/PrivateShelf';
 
 // Import Wagmi
@@ -53,10 +54,11 @@ class App extends Component {
                   <Route path="/" element={<Home />} />
                   <Route path="/view/:tbsn" element={<TBookPub />} />
                   <Route path="/error" element={<Error404 />} />
-                  <Route path="/dashboard" element={<UserHome />} />
+                  <Route path="/dashboard" element={<Notifications />} />
                   <Route path="*" element={<Navigate to="/error" />} />
                   <Route path="/collections" element={<PrivateShelf />} />
-                  
+                  <Route path="/drafts" element={<Drafts />} />
+          
                 </Routes>
               </BrowserRouter>
 

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import AuthWrapper from "../components/ProtectedRoute";
+import AuthWrapper from "../components/AuthWrapper";
 
 const UserHome: React.FC = () => {
   const [stage1, setStage1] = useState([]);
   const [stage2, setStage2] = useState([]);
 
   const pageHTML = (
-    <div className="h-100 w-100">
+    <div>
       <Navbar />
       <div className="container-fluid h-100 mx-0 px-0 w-100">
         <div className="row h-100 w-100 mx-0 px-0">

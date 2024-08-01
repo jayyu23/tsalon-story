@@ -42,7 +42,7 @@ const UserCollection: React.FC<UserCollectionProps> = (props) => {
   }, [username]);
 
   const loadedContent = (
-    <div className="container w-100 mt-5 pt-5">
+    <div className="container w-100 pt-5">
       <h1 className="text-center pt-5">{usernameDisplay || "Loading..."}</h1>
       {/* 
       <ul className="nav nav-pills nav-fill my-5">

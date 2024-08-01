@@ -13,7 +13,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
 
   return (
-    <div>
+    <div className="h-100 mx-0 px-0 w-100">
       { (isLoggedIn && (isConnected || isConnecting) ) ? children : <Nologin />}
     </div>
   );

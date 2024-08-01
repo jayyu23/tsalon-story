@@ -5,13 +5,14 @@ import './sidebar.css';
 interface SidebarItem {
   name: string;
   icon: JSX.Element;
+  link?: string;
 }
 
 const items: SidebarItem[] = [
-  { name: 'Explore', icon: <FaHome /> },
-  { name: 'Dashboard', icon: <FaTachometerAlt /> },
-  { name: 'Collections', icon: <FaFolderOpen /> },
-  { name: 'Drafts', icon: <FaDraftingCompass /> },
+  { name: 'Explore', icon: <FaHome />, link: '/' },
+  { name: 'Dashboard', icon: <FaTachometerAlt />, link: '/dashboard' },
+  { name: 'Collections', icon: <FaFolderOpen />, link: '/collections' },
+  { name: 'Drafts', icon: <FaDraftingCompass />, link: '/drafts' },
   { name: 'Review', icon: <FaCheck /> },
   { name: 'Settings', icon: <FaCog /> },
 ];
@@ -41,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ initialActiveItem }) => {
       <ul>
         {items.map((item, index) => (
           <li key={index} className={item.name === activeItem ? 'active' : ''}>
-            <a href="#" onClick={() => handleItemClick(item.name)}>
+            <a href={(item.link) ? item.link : "#"} onClick={() => handleItemClick(item.name)}>
               {item.icon}
               {!isCollapsed && <span>{item.name}</span>}
             </a>
