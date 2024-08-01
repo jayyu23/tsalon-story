@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../auth/useSessionStorage";
+import { useAccount } from "wagmi";
 import Nologin from "./Nologin";
 
 interface AuthWrapperProps {

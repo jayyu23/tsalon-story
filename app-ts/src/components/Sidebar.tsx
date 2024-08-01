@@ -1,97 +1,55 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { FaHome, FaTachometerAlt, FaFolderOpen, FaDraftingCompass, FaCheck, FaCog, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import './sidebar2.css';
+
+interface SidebarItem {
+  name: string;
+  icon: JSX.Element;
+}
+
+const items: SidebarItem[] = [
+  { name: 'Explore', icon: <FaHome /> },
+  { name: 'Dashboard', icon: <FaTachometerAlt /> },
+  { name: 'Collections', icon: <FaFolderOpen /> },
+  { name: 'Drafts', icon: <FaDraftingCompass /> },
+  { name: 'Review', icon: <FaCheck /> },
+  { name: 'Settings', icon: <FaCog /> },
+];
 
 interface SidebarProps {
-  active?: number;
+  initialActiveItem: string;
 }
 
-interface SidebarOption {
-  index: number;
-  text: string;
-  link: string;
-  icon: string;
-  target?: string;
-}
+const Sidebar: React.FC<SidebarProps> = ({ initialActiveItem }) => {
+  const [activeItem, setActiveItem] = useState<string>(initialActiveItem);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
-const Sidebar: React.FC<SidebarProps> = ({ active = -1 }) => {
-  const username = sessionStorage.getItem("username")?.replace(/ /g, "_").toLowerCase() || "";
-  const [collapsed, setCollapsed] = useState(false);
+  const handleItemClick = (name: string) => {
+    setActiveItem(name);
+    // Assuming this would trigger a page navigation, e.g., via React Router.
+  };
 
-  const sidebarOptions: SidebarOption[] = [
-    {
-      index: 0,
-      text: "Explore",
-      link: "/",
-      icon: "fa fa-lines-leaning",
-      target: "_blank",
-    },
-    {
-      index: 1,
-      text: "Dashboard",
-      link: "/dashboard",
-      icon: "fa fa-compass",
-    },
-    {
-      index: 2,
-      text: "Collections",
-      link: "/collections",
-      icon: "fa fa-book",
-    },
-    { index: 3, text: "Drafts", link: "/drafts", icon: "fa fa-pencil" },
-    { index: 4, text: "Review", link: "/review", icon: "fa fa-check-to-slot" },
-    { index: 5, text: "Settings", link: "/settings", icon: "fa fa-cog" },
-  ];
-
-  const toggleCollapse = () => {
-    setCollapsed(!collapsed);
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   return (
-    <div className={`sidebar h-100 ${collapsed ? 'sidebar-collapsed' : ''}`}>
-      <div className="d-flex flex-column flex-shrink-0 p-3 text-white bg-secondary h-100">
-        <div className="d-flex justify-content-between align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-          <a
-            href="#"
-            className="d-flex align-items-center text-white text-decoration-none"
-            onClick={toggleCollapse}
-          >
-            <span className="fs-4">
-              <i className={`fa ${collapsed ? 'fa-bars' : 'fa-times'} mx-3 mb-4 mt-5 pt-auto`}></i>
-              {collapsed ? '' : 'Menu'}
-            </span>
-          </a>
-          {collapsed && (
-            <button onClick={toggleCollapse} className="btn btn-primary ml-auto">
-              <i className="fa fa-bars"></i>
-            </button>
-          )}
-        </div>
-        <div className="text-center mb-4">
-          <img src={`https://avatars.dicebear.com/api/initials/${username}.svg`} alt="Avatar" className="rounded-circle" width="50" height="50" />
-          {!collapsed && <h6 className="mt-2">{username}</h6>}
-        </div>
-        <ul className="nav nav-pills flex-column mb-auto">
-          {sidebarOptions.map((data) => (
-            <li key={data.index} className="nav-item my-1">
-              <a
-                href={data.link}
-                target={data.target || "_self"}
-                className={
-                  data.index === active
-                    ? "nav-link active flex-shrink-0"
-                    : "nav-link text-white"
-                }
-                aria-current="page"
-                title={collapsed ? data.text : ''}
-              >
-                <i className={data.icon + " mx-2"}></i>
-                {!collapsed && data.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <button className="toggle-button" onClick={toggleSidebar}>
+        {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
+      </button>
+      <ul>
+        {items.map((item, index) => (
+          <li key={index} className={item.name === activeItem ? 'active' : ''}>
+            <a href="#" onClick={() => handleItemClick(item.name)}>
+              {item.icon}
+              {!isCollapsed && <span>{item.name}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
 export default Sidebar;

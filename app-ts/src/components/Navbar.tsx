@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './navbar.css';
 import WalletFunction from './WalletFunction'; // Import the new WalletFunction component
-import auth from '../auth/authhandler';
+import { useAccount } from 'wagmi';
+import { useAuth } from '../auth/useSessionStorage';
 
 const navItems = [
   { name: 'Home', path: '/' },
@@ -13,6 +14,11 @@ const navItems = [
 const logoUrl = "/assets/logo_circle.png";
 
 const TopNavbar: React.FC = () => {
+  const { isLoggedIn } = useAuth();
+  const { isConnected } = useAccount();
+
+  const visibleNavItems = navItems.filter(item => !item.protected || isConnected );
+
   return (
     <nav className="navbar">
       <div className="nav-items">
@@ -21,12 +27,10 @@ const TopNavbar: React.FC = () => {
           src={logoUrl}
           width="45px"
           alt="Logo"
-        ></img>
-        {navItems.map((item) => (
+        />
+        {visibleNavItems.map((item) => (
           <Link key={item.name} to={item.path} className="nav-item">
-            {
-              (!item.protected || auth.isLoggedIn()) ? item.name : ""
-  }
+            {item.name}
           </Link>
         ))}
       </div>
