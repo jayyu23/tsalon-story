@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import Sidebar2 from "../components/Sidebar";
+import Sidebar from "../components/Sidebar";
 import AuthWrapper from "../components/ProtectedRoute";
 
 const UserHome: React.FC = () => {
@@ -13,7 +13,7 @@ const UserHome: React.FC = () => {
       <div className="container-fluid h-100 mx-0 px-0 w-100">
         <div className="row h-100 w-100 mx-0 px-0">
           <div className="col-md-3 col-xs-12 px-0 mx-0">
-            <Sidebar2 initialActiveItem="Dashboard"/>
+            <Sidebar initialActiveItem="Dashboard"/>
           </div>
 
           <div

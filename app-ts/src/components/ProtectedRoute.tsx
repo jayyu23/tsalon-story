@@ -9,10 +9,12 @@ interface AuthWrapperProps {
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const { isLoggedIn } = useAuth();
+  const { isConnected, isConnecting } = useAccount();
+
 
   return (
     <div>
-      { isLoggedIn ? children : <Nologin />}
+      { (isLoggedIn && (isConnected || isConnecting) ) ? children : <Nologin />}
     </div>
   );
 };

@@ -14,7 +14,7 @@ const PrivateShelf: React.FC = () => {
         <NavBar />
         <div className="row h-100 w-100">
           <div className="col-md-3 col-xs-12">
-            <Sidebar active={1} />
+            <Sidebar initialActiveItem="Dashboard" />
           </div>
           <div
             className="col-xs-12 col-md-9 m-0 p-0"

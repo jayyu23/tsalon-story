@@ -33,10 +33,6 @@ function useAuth() {
     setIsLoggedIn(loggedIn);
   }, [session]);
 
-  useEffect(() => {
-    console.log("isLoggedIn: ", isLoggedIn);
-  }, [isLoggedIn]);
-
   const clearSession = () => {
     setSession(null);
   };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaHome, FaTachometerAlt, FaFolderOpen, FaDraftingCompass, FaCheck, FaCog, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import './sidebar2.css';
+import './sidebar.css';
 
 interface SidebarItem {
   name: string;
