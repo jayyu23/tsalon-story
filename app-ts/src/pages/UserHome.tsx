@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Sidebar2 from "../components/Sidebar2";
-import AuthWrapper from "../components/AuthWrapper";
+import AuthWrapper from "../components/ProtectedRoute";
 
 const UserHome: React.FC = () => {
   const [stage1, setStage1] = useState([]);

@@ -13,7 +13,7 @@ class AuthHandler {
         return this.nonce;
     }
 
-    async login(address: string, signMessageAsync: any) {
+    async login(address: string, signedMessage: string) {
         console.log("Login called");
         // assume connect called. this can be a wallet switch. Requests the nonce ONLY.
         if (this.isLoggedIn()) {
@@ -21,22 +21,22 @@ class AuthHandler {
         }
 
         try {
-            // Send request to server endpoint to get nonce. Write SessionStorage
-            const response = await axios.post(endpoints.getNonceAPI(), { address });
-            const nonce = response.data.nonce;
-            this.nonce = nonce;
-            console.log("Nonce: ", nonce);
+            // // Send request to server endpoint to get nonce. Write SessionStorage
+            // const response = await axios.post(endpoints.getNonceAPI(), { address });
+            // const nonce = response.data.nonce;
+            // this.nonce = nonce;
+            // console.log("Nonce: ", nonce);
 
-            const signMessageVariables = { message: this.nonce };
-            const signMessageOptions = {
-              onSettled: (data: string, error: Error) => {
-                if (error) {
-                  console.error('Sign message settled with error:', error);
-                  throw error;
-                }
-              },
-            };
-            const signedMessage = await signMessageAsync(signMessageVariables, signMessageOptions);
+            // const signMessageVariables = { message: this.nonce };
+            // const signMessageOptions = {
+            //   onSettled: (data: string, error: Error) => {
+            //     if (error) {
+            //       console.error('Sign message settled with error:', error);
+            //       throw error;
+            //     }
+            //   },
+            // };
+            // const signedMessage = await signMessageAsync(signMessageVariables, signMessageOptions);
             await axios.post(endpoints.getSignInAPI(), { address, signature: signedMessage }).then(
                 (acc) => {
                     console.log("Authhandler Login successful");

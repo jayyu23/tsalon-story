@@ -2,10 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './navbar.css';
 import WalletFunction from './WalletFunction'; // Import the new WalletFunction component
+import auth from '../auth/authhandler';
 
 const navItems = [
   { name: 'Home', path: '/' },
   { name: 'About', path: 'https://github.com/jayyu23/tsalon-story' },
+  { name: 'Dashboard', path: '/dashboard', protected: true },
 ];
 
 const logoUrl = "/assets/logo_circle.png";
@@ -22,7 +24,9 @@ const TopNavbar: React.FC = () => {
         ></img>
         {navItems.map((item) => (
           <Link key={item.name} to={item.path} className="nav-item">
-            {item.name}
+            {
+              (!item.protected || auth.isLoggedIn()) ? item.name : ""
+  }
           </Link>
         ))}
       </div>

@@ -3,7 +3,7 @@ import auth from "../auth/authhandler";
 import NavBar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import UserCollection from "../components/Collection";
-import AuthWrapper from "../components/AuthWrapper";
+import AuthWrapper from "../components/ProtectedRoute";
 
 const PrivateShelf: React.FC = () => {
   const username = auth.getWalletAddress();
