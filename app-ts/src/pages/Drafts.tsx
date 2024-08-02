@@ -12,11 +12,11 @@ const UserHome: React.FC = () => {
       <Navbar />
       <div className="d-flex flex-grow-1">
         <div className="d-flex flex-column">
-            <Sidebar initialActiveItem="Dashboard"/>
+            <Sidebar initialActiveItem="Drafts"/>
           </div>
 
           <div className="flex-grow-1 d-flex flex-column my-0 h-100">
-            <h1 className="my-5 pt-5 text-center">My Drafts</h1>
+            <h1 className="my-5 text-center">My Drafts</h1>
 
             <ul className="nav nav-pills nav-fill mb-5">
               <li className="nav-item">

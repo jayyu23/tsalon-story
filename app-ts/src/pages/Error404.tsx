@@ -4,7 +4,7 @@ import NavBar from "../components/Navbar";
 const Error404: React.FC = () => {
   const imgUrl = "/assets/cafedeflore.jpg";
   return (
-    <div className="my-0 py-0">
+    <div className="vw-100 vh-100 d-flex flex-column">
       <NavBar />
       <div
         className="bg img-fluid"
