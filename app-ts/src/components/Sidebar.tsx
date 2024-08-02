@@ -14,7 +14,7 @@ const items: SidebarItem[] = [
   { name: 'Collections', icon: <FaFolderOpen />, link: '/collections' },
   { name: 'Drafts', icon: <FaDraftingCompass />, link: '/drafts' },
   { name: 'Review', icon: <FaCheck /> },
-  { name: 'Settings', icon: <FaCog /> },
+  { name: 'Settings', icon: <FaCog />, link: '/settings' },
 ];
 
 interface SidebarProps {

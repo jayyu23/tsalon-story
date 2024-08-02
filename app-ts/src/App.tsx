@@ -28,6 +28,7 @@ import {
 } from 'wagmi/chains';
 import Editor from './pages/Editor';
 import TestPage from './pages/TestPage';
+import Settings from './pages/Settings';
 
 
 const config = getDefaultConfig({
@@ -63,6 +64,7 @@ class App extends Component {
                     <Route path="/collections" element={<PrivateShelf />} />
                     <Route path="/drafts" element={<Drafts />} />
                     <Route path="/editor" element={<Editor />} />
+                    <Route path="/settings" element={<Settings />} />
                     <Route path="/test" element={<TestPage />} />
             
                   </Routes>
