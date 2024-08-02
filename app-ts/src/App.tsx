@@ -26,6 +26,7 @@ import {
 import {
   sepolia,
 } from 'wagmi/chains';
+import MarkdownEditor from './pages/MarkdownEditor';
 
 
 const config = getDefaultConfig({
@@ -58,6 +59,7 @@ class App extends Component {
                   <Route path="*" element={<Navigate to="/error" />} />
                   <Route path="/collections" element={<PrivateShelf />} />
                   <Route path="/drafts" element={<Drafts />} />
+                  <Route path="/editor" element={<MarkdownEditor />} />
           
                 </Routes>
               </BrowserRouter>
