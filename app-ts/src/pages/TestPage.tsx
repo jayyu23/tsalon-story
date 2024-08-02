@@ -12,7 +12,7 @@ const TestPage: React.FC = () => {
                 </div>
                 <div className="flex-grow-1 d-flex flex-column my-0 h-100">
                     <h1 className="my-5 pt-5 text-center">Test Page</h1>
-                    <p>This is a test page ss</p>
+                    <p style={{marginTop: "800px"}}>This is a test page ss</p>
                 </div>
             </div>
         </div>

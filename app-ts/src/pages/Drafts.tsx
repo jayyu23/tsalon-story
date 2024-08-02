@@ -8,16 +8,14 @@ const UserHome: React.FC = () => {
   const [stage2, setStage2] = useState([]);
 
   const pageHTML = (
-    <div className="vw-100">
+    <div className='vw-100 vh-100 d-flex flex-column'>
       <Navbar />
-          <div className="col-md-3 col-xs-12 px-0 mx-0">
+      <div className="d-flex flex-grow-1">
+        <div className="d-flex flex-column">
             <Sidebar initialActiveItem="Dashboard"/>
           </div>
 
-          <div
-            className="col-xs-12 col-md-9 my-0 "
-            style={{ minHeight: window.innerHeight }}
-          >
+          <div className="flex-grow-1 d-flex flex-column my-0 h-100">
             <h1 className="my-5 pt-5 text-center">My Drafts</h1>
 
             <ul className="nav nav-pills nav-fill mb-5">
@@ -91,6 +89,7 @@ const UserHome: React.FC = () => {
             </span>
           </div>
       </div>
+    </div>
   );
 
   return (

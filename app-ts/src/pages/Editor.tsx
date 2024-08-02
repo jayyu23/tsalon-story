@@ -21,22 +21,22 @@ const Editor: React.FC = () => {
   };
 
   return (
-    <div className="editor-container vh-100">
+    <div className="vw-100 vh-100 d-flex flex-column">
       <Navbar />
-      <div className="row h-100">
-
-        <div className="col-md-3 col-xs-12" style={{display: "flex", flexDirection: "column", height: "100%"}}>
+      <div className="d-flex flex-grow-1">
+        <div className="d-flex flex-column">
           <Sidebar initialActiveItem="Drafts" />
         </div>
-        <div className="col-xs-12 col-md-9 p-0">
+        <div className="flex-grow-1 d-flex flex-column my-0 h-100">
+        <h1 className="my-5 text-center">Editor</h1>
           <MarkdownEditor
             markdown={markdown}
             setMarkdown={setMarkdown}
             lastSavedTime={lastSavedTime}
           />
           <div className="container">
-            <h2>Saved Content</h2>
-            <p>{markdown}</p>
+            {/* <h2>Saved Content</h2>
+            <p>{markdown}</p> */}
             <p>Last saved at: {formatTime(lastSavedTime)}</p>
           </div>
         </div>

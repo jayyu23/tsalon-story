@@ -51,16 +51,13 @@ const Notifications: React.FC = () => {
 
   return (
     <AuthWrapper>
-        <div className="h-100 mx-0 px-0 w-100">
+        <div className='vw-100 vh-100 d-flex flex-column'>
         <NavBar />
-        <div className="row h-100 w-100">
-            <div className="col-md-3 col-xs-12">
+        <div className="d-flex flex-grow-1">
+          <div className="d-flex flex-column">
             <Sidebar initialActiveItem="Dashboard" />
             </div>
-            <div
-            className="col-xs-12 col-md-9 justify-content-center"
-            style={{ minHeight: window.innerHeight }}
-            >
+            <div className="flex-grow-1 d-flex flex-column my-0 h-100">
             <h1 className="my-5 pt-5 text-center">Welcome, {username}</h1>
             {messages.map((data) => (
                 <Notification

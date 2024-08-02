@@ -50,7 +50,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, setMarkdown, 
               onChange={handleEditorChange}
               className="editor-textarea"
             />
-            <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div>
+            {/* <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div> */}
           </div>
         )}
         {viewMode === ViewMode.SPLIT_PANE && (
@@ -62,7 +62,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, setMarkdown, 
                 onChange={handleEditorChange}
                 className="editor-textarea"
               />
-              <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div>
+              {/* <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div> */}
             </div>
             <div className="preview-pane">
               <ReactMarkdown>{markdown}</ReactMarkdown>
@@ -72,7 +72,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, setMarkdown, 
         {viewMode === ViewMode.FULL_PREVIEW && (
           <div className="preview-pane full-view">
             <ReactMarkdown>{markdown}</ReactMarkdown>
-            <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div>
+            {/* <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div> */}
           </div>
         )}
       </div>
