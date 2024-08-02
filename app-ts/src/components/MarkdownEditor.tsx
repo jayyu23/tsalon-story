@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { FaEdit, FaColumns, FaEye } from 'react-icons/fa';
-import AuthWrapper from '../components/AuthWrapper';
-import './MarkdownEditor.css';
+import AuthWrapper from './AuthWrapper';
+import './markdownEditor.css';
 
 enum ViewMode {
   FULL_EDITOR,
@@ -10,12 +10,22 @@ enum ViewMode {
   FULL_PREVIEW
 }
 
-const MarkdownEditor: React.FC = () => {
-  const [markdown, setMarkdown] = useState<string>('');
+interface MarkdownEditorProps {
+  markdown: string;
+  setMarkdown: (markdown: string) => void;
+  lastSavedTime: Date | null;
+}
+
+const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, setMarkdown, lastSavedTime }) => {
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.SPLIT_PANE);
 
   const handleEditorChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMarkdown(event.target.value);
+  };
+
+  const formatTime = (date: Date | null) => {
+    if (!date) return '';
+    return date.toLocaleTimeString();
   };
 
   return (
@@ -40,6 +50,7 @@ const MarkdownEditor: React.FC = () => {
               onChange={handleEditorChange}
               className="editor-textarea"
             />
+            <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div>
           </div>
         )}
         {viewMode === ViewMode.SPLIT_PANE && (
@@ -51,6 +62,7 @@ const MarkdownEditor: React.FC = () => {
                 onChange={handleEditorChange}
                 className="editor-textarea"
               />
+              <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div>
             </div>
             <div className="preview-pane">
               <ReactMarkdown>{markdown}</ReactMarkdown>
@@ -60,6 +72,7 @@ const MarkdownEditor: React.FC = () => {
         {viewMode === ViewMode.FULL_PREVIEW && (
           <div className="preview-pane full-view">
             <ReactMarkdown>{markdown}</ReactMarkdown>
+            <div className="autosave-status">Last saved at: {formatTime(lastSavedTime)}</div>
           </div>
         )}
       </div>

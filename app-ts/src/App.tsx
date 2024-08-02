@@ -26,7 +26,8 @@ import {
 import {
   sepolia,
 } from 'wagmi/chains';
-import MarkdownEditor from './pages/MarkdownEditor';
+import Editor from './pages/Editor';
+import TestPage from './pages/TestPage';
 
 
 const config = getDefaultConfig({
@@ -46,27 +47,31 @@ class App extends Component {
    */
   render() {
     return (
-      <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
-              {/* Routes */}
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/view/:tbsn" element={<TBookPub />} />
-                  <Route path="/error" element={<Error404 />} />
-                  <Route path="/dashboard" element={<Notifications />} />
-                  <Route path="*" element={<Navigate to="/error" />} />
-                  <Route path="/collections" element={<PrivateShelf />} />
-                  <Route path="/drafts" element={<Drafts />} />
-                  <Route path="/editor" element={<MarkdownEditor />} />
-          
-                </Routes>
-              </BrowserRouter>
+      <div className="App">
+        <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>
 
-            </RainbowKitProvider>
-          </QueryClientProvider>
-      </WagmiProvider>
+            <RainbowKitProvider>
+                {/* Routes */}
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/view/:tbsn" element={<TBookPub />} />
+                    <Route path="/error" element={<Error404 />} />
+                    <Route path="/dashboard" element={<Notifications />} />
+                    <Route path="*" element={<Navigate to="/error" />} />
+                    <Route path="/collections" element={<PrivateShelf />} />
+                    <Route path="/drafts" element={<Drafts />} />
+                    <Route path="/editor" element={<Editor />} />
+                    <Route path="/test" element={<TestPage />} />
+            
+                  </Routes>
+                </BrowserRouter>
+
+              </RainbowKitProvider>
+            </QueryClientProvider>
+        </WagmiProvider>
+      </div>
     );
   }
 }

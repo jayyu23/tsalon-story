@@ -8,10 +8,8 @@ const UserHome: React.FC = () => {
   const [stage2, setStage2] = useState([]);
 
   const pageHTML = (
-    <div>
+    <div className="vw-100">
       <Navbar />
-      <div className="container-fluid h-100 mx-0 px-0 w-100">
-        <div className="row h-100 w-100 mx-0 px-0">
           <div className="col-md-3 col-xs-12 px-0 mx-0">
             <Sidebar initialActiveItem="Dashboard"/>
           </div>
@@ -92,9 +90,7 @@ const UserHome: React.FC = () => {
               ))} */}
             </span>
           </div>
-        </div>
       </div>
-    </div>
   );
 
   return (
