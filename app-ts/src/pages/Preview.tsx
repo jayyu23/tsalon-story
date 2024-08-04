@@ -20,14 +20,20 @@ const Preview: React.FC = () => {
   const { previewData } = location.state as any;
 
   const data = {
-    author: "Your Name",
+    tbsn: previewData.tbsn,
+    author: previewData.author,
     title: previewData.title,
     content: previewData.markdown,
+    blurb: previewData?.blurb,
     coverImage: previewData.coverImage,
   };
 
   const handleBack = () => {
-    navigate("/editor", { state: { previewData } });
+    navigate("/editor", { state: {
+        tbsn: previewData.tbsn,
+        title: previewData.title,
+        content: previewData.markdown, 
+        blurb: previewData.blurb} });
   };
 
   const handlePublish = () => {

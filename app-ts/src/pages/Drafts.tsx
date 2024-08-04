@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import AuthWrapper from "../components/AuthWrapper";
+import TBookDraft from "../components/TBookDraft";
 import { useAuth } from "../auth/useSessionStorage";
 import endpoints from "../auth/endpoints";
 import axios from "axios";
@@ -17,13 +18,12 @@ const UserHome: React.FC = () => {
     const endpoint = endpoints.getUserDraftAPI(username);
     axios.get(endpoint, authData.config).then(
       (acc) => {
-        const drafts = acc.data.drafts;
-        // const stage1 = drafts.filter((draft: any) => draft.stage === 1);
-        // const stage2 = drafts.filter((draft: any) => draft.stage === 2);
-        // setStage1(stage1);
-        // setStage2(stage2);
-        setStage1(drafts);
-        setStage2(drafts);
+        const drafts = acc.data;
+        console.log(drafts);
+        const stage1: any = drafts.stage1;
+        const stage2 = drafts.stage2;
+        setStage1(stage1);
+        setStage2(stage2);
       },
       (rej) => {
         console.log(rej);
@@ -71,9 +71,6 @@ const UserHome: React.FC = () => {
                 <h2 className="card-title text-center my-5"> New Draft </h2>
                 <a
                   href="/editor"
-                  onClick={() => {
-                    sessionStorage.setItem("draftTBSN", "0");
-                  }}
                 >
                   <i
                     className="card-img-top fa fa-light fa-pen-to-square text-center pt-4"
@@ -84,16 +81,16 @@ const UserHome: React.FC = () => {
                   Start your next masterpiece here...
                 </h5>
               </div>
-              {/* {stage1.map((data) => (
+              {stage1.map((data: any) => (
                 <TBookDraft
-                  key={data.tbsn}
-                  tbsn={data.tbsn}
+                  key={data?.tbsn}
+                  tbsn={data?.tbsn}
                   title={data.title}
-                  author={data.author}
-                  imageCover={data.coverImage}
+                  author={data?.author}
+                  imageCover={data?.coverImage}
                   editable={true}
                 />
-              ))} */}
+              ))}
             </span>
             <span
               id="tab2"

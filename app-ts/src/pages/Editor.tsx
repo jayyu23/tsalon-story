@@ -11,13 +11,16 @@ import AuthWrapper from '../components/AuthWrapper';
 const Editor: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [markdown, setMarkdown] = useState<string>(location.state?.previewData?.markdown || '');
+  const [markdown, setMarkdown] = useState<string>(location.state?.content || '');
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  const [title, setTitle] = useState<string>(location.state?.previewData?.title || '');
-  const [blurb, setBlurb] = useState<string>(location.state?.previewData?.blurb || '');
+  const [title, setTitle] = useState<string>(location.state?.title || '');
+  const [blurb, setBlurb] = useState<string>(location.state?.blurb || '');
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [tbsn, setTbsn] = useState<number>(location.state?.previewData?.tbsn || 0);
-  const { getAuthData } = useAuth();
+  const [tbsn, setTbsn] = useState<number>(location.state?.tbsn || 0);
+  const [ loadAPI, setLoadAPI ] = useState<boolean>(location.state?.loadAPI || false);
+
+
+  const { getAuthData, session } = useAuth();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,6 +30,26 @@ const Editor: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [markdown]);
+
+  useEffect(() => {
+    if (loadAPI) {
+      console.log('loading API');
+      const endpoint = endpoints.getDraftAPI(tbsn.toString());
+      const authData = getAuthData();
+      axios.get(endpoint, authData.config)
+        .then((response) => {
+          console.log(response.data);
+          const draft = response.data;
+          setMarkdown(draft.content);
+          setTitle(draft.title);
+          setBlurb(draft.blurb);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }
+  , []);
 
   const formatTime = (date: Date | null) => {
     if (!date) return '';
@@ -38,6 +61,8 @@ const Editor: React.FC = () => {
       setCoverImage(event.target.files[0]);
     }
   };
+
+  const author = session?.address || 'Unknown';
 
   const savePost = () => {
     console.log('saving post');
@@ -66,6 +91,8 @@ const Editor: React.FC = () => {
 
   const generatePreview = () => {
     const previewData = {
+      tbsn,
+      author,
       title,
       blurb,
       markdown,

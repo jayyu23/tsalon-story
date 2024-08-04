@@ -8,7 +8,7 @@ const ErrorNoLogin: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/");
-    }, 1);
+    }, 100);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [navigate]);
