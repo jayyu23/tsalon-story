@@ -3,6 +3,10 @@ import MarkdownEditor from '../components/MarkdownEditor';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import endpoints from '../auth/endpoints';
+import { useAuth } from '../auth/useSessionStorage';
+import AuthWrapper from '../components/AuthWrapper';
 
 const Editor: React.FC = () => {
   const location = useLocation();
@@ -12,11 +16,14 @@ const Editor: React.FC = () => {
   const [title, setTitle] = useState<string>(location.state?.previewData?.title || '');
   const [blurb, setBlurb] = useState<string>(location.state?.previewData?.blurb || '');
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [tbsn, setTbsn] = useState<number>(location.state?.previewData?.tbsn || 0);
+  const { getAuthData } = useAuth();
 
   useEffect(() => {
     const interval = setInterval(() => {
       setLastSavedTime(new Date());
-    }, 5000);
+      // savePost();
+    }, 50000);
 
     return () => clearInterval(interval);
   }, [markdown]);
@@ -32,7 +39,30 @@ const Editor: React.FC = () => {
     }
   };
 
-  const savePost = () => { };
+  const savePost = () => {
+    console.log('saving post');
+    const endpoint = endpoints.getDraftSaveAPI();
+    const authData = getAuthData();
+
+    const body = {
+      tbsn,
+      title,
+      blurb,
+      content: markdown,
+      author: authData.body.username,
+      coverImage: coverImage
+    };
+    console.log(body, authData);
+    axios.post(endpoint, body, authData.config)
+      .then((response) => {
+        console.log(response.data);
+        setTbsn(response.data.draft.tbsn);
+        sessionStorage.setItem('tbsn', response.data.draft.tbsn);
+      })
+      .catch((error) => {
+        console.error(error)
+      });
+  };
 
   const generatePreview = () => {
     const previewData = {
@@ -45,6 +75,7 @@ const Editor: React.FC = () => {
   };
 
   return (
+    <AuthWrapper>
     <div className="vw-100 vh-100 d-flex flex-column">
       <Navbar />
       <div className="d-flex flex-grow-1">
@@ -120,6 +151,7 @@ const Editor: React.FC = () => {
         </div>
       </div>
     </div>
+    </AuthWrapper>
   );
 };
 

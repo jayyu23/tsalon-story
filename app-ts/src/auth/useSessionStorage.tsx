@@ -23,8 +23,13 @@ function useSessionStorage<T>(key: string, initialValue: T) {
   return [storedValue, setStoredValue] as const;
 }
 
+interface SessionType {
+  token: string;
+  address: string;
+}
+
 function useAuth() {
-  const [session, setSession] = useSessionStorage<Object | null>('session', null);
+  const [session, setSession] = useSessionStorage<SessionType | null>('session', null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -37,7 +42,21 @@ function useAuth() {
     setSession(null);
   };
 
-  return { session, setSession, clearSession, isLoggedIn };
+  const getAuthData = () => {
+    const token = session?.token;
+    const address = session?.address;
+    
+      let body = {
+        walletAddress: address,
+        username: address,
+      };
+      let config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+      return { body, config };
+    }
+
+  return { session, setSession, clearSession, isLoggedIn, getAuthData };
 }
 
 export { useSessionStorage, useAuth };

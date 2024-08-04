@@ -25,12 +25,16 @@ const create = (req: Request, res: Response, next: NextFunction) => {
 const update = (req: Request, res: Response, next: NextFunction) => {
     console.log('update');
     const fields = req.body;
+    console.log(fields);
 
     if (fields.tbsn === 0) {
         // Create
+        console.log("create");
         const draft = new tbookModel(fields);
         draft.save().then(
-            (acc) => res.status(200).json({ message: 'Draft success', draft: acc }),
+            (acc) => {
+                console.log(acc);
+                res.status(200).json({ message: 'Draft success', draft: acc })},
             (rej) => res.status(400).json({ error: rej.message })
         );
     } else {

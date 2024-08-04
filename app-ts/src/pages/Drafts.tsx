@@ -1,11 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import AuthWrapper from "../components/AuthWrapper";
+import { useAuth } from "../auth/useSessionStorage";
+import endpoints from "../auth/endpoints";
+import axios from "axios";
 
 const UserHome: React.FC = () => {
   const [stage1, setStage1] = useState([]);
   const [stage2, setStage2] = useState([]);
+  const { getAuthData, session } = useAuth();
+  const username = session?.address || "";
+
+  useEffect(() => {
+    const authData = getAuthData();
+    const endpoint = endpoints.getUserDraftAPI(username);
+    axios.get(endpoint, authData.config).then(
+      (acc) => {
+        const drafts = acc.data.drafts;
+        // const stage1 = drafts.filter((draft: any) => draft.stage === 1);
+        // const stage2 = drafts.filter((draft: any) => draft.stage === 2);
+        // setStage1(stage1);
+        // setStage2(stage2);
+        setStage1(drafts);
+        setStage2(drafts);
+      },
+      (rej) => {
+        console.log(rej);
+      }
+    );
+  }, []);
 
   const pageHTML = (
     <div className='vw-100 vh-100 d-flex flex-column'>

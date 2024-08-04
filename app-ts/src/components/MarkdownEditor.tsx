@@ -29,7 +29,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, setMarkdown, 
   };
 
   return (
-    <AuthWrapper>
       <div className="markdown-editor">
         <div className="buttons-row mb-5">
           <button className="btn btn-secondary view-button" onClick={() => setViewMode(ViewMode.FULL_EDITOR)}>
@@ -76,7 +75,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, setMarkdown, 
           </div>
         )}
       </div>
-    </AuthWrapper>
   );
 };
 

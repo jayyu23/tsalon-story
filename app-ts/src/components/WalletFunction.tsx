@@ -62,11 +62,16 @@ const WalletFunction: React.FC = () => {
     }
 
     if (session) {
+      if (!isConnected) {
+        console.log("Session exists but not connected");
+        disconnect();
+        clearSession();
+      }
       console.log("Session exists");
       return;
     }
 
-    if (isConnected && address && chain?.id === SEPOLIA_CHAIN_ID) {
+    if (isConnected && address) {
       console.log("Connected to Sepolia Chain");
       login(address).catch((error) => {
         console.log("Login failed:", error);
