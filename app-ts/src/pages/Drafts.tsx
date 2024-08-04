@@ -16,7 +16,7 @@ const UserHome: React.FC = () => {
   useEffect(() => {
     const authData = getAuthData();
     const endpoint = endpoints.getUserDraftAPI(username);
-    axios.get(endpoint, authData.config).then(
+    axios.post(endpoint, authData.body, authData.config).then(
       (acc) => {
         const drafts = acc.data;
         console.log(drafts);

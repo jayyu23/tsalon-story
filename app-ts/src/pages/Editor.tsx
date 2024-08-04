@@ -7,8 +7,14 @@ import axios from "axios";
 import endpoints from '../auth/endpoints';
 import { useAuth } from '../auth/useSessionStorage';
 import AuthWrapper from '../components/AuthWrapper';
+import TBookView from '../components/TBookView';
 
-const Editor: React.FC = () => {
+const EditorPreview: React.FC = () => {
+  const images = ["blue", "green", "orange", "purple"];
+  const defaultCoverImage = `/assets/logo_square_${
+    images[Math.floor(Math.random() * images.length)]
+  }.png`;
+  
   const location = useLocation();
   const navigate = useNavigate();
   const [markdown, setMarkdown] = useState<string>(location.state?.content || '');
@@ -16,9 +22,10 @@ const Editor: React.FC = () => {
   const [title, setTitle] = useState<string>(location.state?.title || '');
   const [blurb, setBlurb] = useState<string>(location.state?.blurb || '');
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImageDataUrl, setCoverImageDataUrl] = useState<string>(location.state?.coverImage || defaultCoverImage);
   const [tbsn, setTbsn] = useState<number>(location.state?.tbsn || 0);
-  const [ loadAPI, setLoadAPI ] = useState<boolean>(location.state?.loadAPI || false);
-
+  const [loadAPI, setLoadAPI] = useState<boolean>(location.state?.loadAPI || false);
+  const [isPreview, setIsPreview] = useState<boolean>(false);
 
   const { getAuthData, session } = useAuth();
 
@@ -36,7 +43,7 @@ const Editor: React.FC = () => {
       console.log('loading API');
       const endpoint = endpoints.getDraftAPI(tbsn.toString());
       const authData = getAuthData();
-      axios.get(endpoint, authData.config)
+      axios.post(endpoint, authData.body, authData.config)
         .then((response) => {
           console.log(response.data);
           const draft = response.data;
@@ -58,7 +65,13 @@ const Editor: React.FC = () => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setCoverImage(event.target.files[0]);
+      const file = event.target.files[0];
+      setCoverImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverImageDataUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -75,7 +88,7 @@ const Editor: React.FC = () => {
       blurb,
       content: markdown,
       author: authData.body.username,
-      coverImage: coverImage
+      coverImage: coverImage || defaultCoverImage
     };
     console.log(body, authData);
     axios.post(endpoint, body, authData.config)
@@ -90,96 +103,141 @@ const Editor: React.FC = () => {
   };
 
   const generatePreview = () => {
-    const previewData = {
-      tbsn,
-      author,
-      title,
-      blurb,
-      markdown,
-      coverImage: coverImage ? URL.createObjectURL(coverImage) : null,
-    };
-    navigate('/preview', { state: { previewData } });
+    savePost();
+    setIsPreview(true);
+  };
+
+  const handleBack = () => {
+    savePost();
+    setIsPreview(false);
+  };
+
+  const handlePublish = () => {
+    // Publish the post
+    // axios.post(endpoints.publishAPI(), {
+    //   title,
+    //   blurb,
+    //   markdown,
+    //   coverImage,
+    // });
+    navigate("/");
+  };
+
+  const previewData = {
+    tbsn,
+    author,
+    title,
+    content: markdown,
+    blurb,
+    coverImage: coverImageDataUrl || defaultCoverImage,
   };
 
   return (
     <AuthWrapper>
-    <div className="vw-100 vh-100 d-flex flex-column">
-      <Navbar />
-      <div className="d-flex flex-grow-1">
-        <div className="d-flex flex-column">
-          <Sidebar initialActiveItem="Drafts" />
-        </div>
-        <div className="flex-grow-1 d-flex flex-column my-0 h-100 px-4 pb-5">
-          <h1 className="my-5 text-center">Draft Editor</h1>
-          <div className="container mb-4 text-left">
-            <div className="form-group row align-items-center mb-3">
-              <label htmlFor="title" className="col-sm-2 col-form-label">Title</label>
-              <div className="col-sm-10">
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  id="title" 
-                  value={title} 
-                  onChange={(e) => setTitle(e.target.value)} 
-                />
-              </div>
-            </div>
-            <div className="form-group row align-items-center mb-3">
-              <label htmlFor="blurb" className="col-sm-2 col-form-label">Blurb</label>
-              <div className="col-sm-10">
-                <textarea 
-                  className="form-control" 
-                  id="blurb" 
-                  rows={3} 
-                  value={blurb} 
-                  onChange={(e) => setBlurb(e.target.value)} 
-                />
-              </div>
-            </div>
-            <div className="form-group row align-items-center mb-3">
-              <label htmlFor="coverImage" className="col-sm-2 col-form-label">Cover Image</label>
-              <div className="col-sm-10">
-                <input 
-                  type="file" 
-                  className="form-control-file" 
-                  id="coverImage" 
-                  onChange={handleImageUpload} 
-                  style={{ fontSize: 'small' }}
-                />
-              </div>
-            </div>
+      <div className="vw-100 vh-100 d-flex flex-column">
+        <Navbar />
+        <div className="d-flex flex-grow-1">
+          <div className="d-flex flex-column">
+            <Sidebar initialActiveItem="Drafts" />
           </div>
-          <div className="container mt-2 mb-2">
-            <MarkdownEditor
-              markdown={markdown}
-              setMarkdown={setMarkdown}
-              lastSavedTime={lastSavedTime}
-            />
+          <div className="flex-grow-1 d-flex flex-column my-0 h-100 px-4 pb-5">
+            {!isPreview ? (
+              <>
+                <h1 className="my-5 text-center">Draft Editor</h1>
+                <div className="container mb-4 text-left">
+                  <div className="form-group row align-items-center mb-3">
+                    <label htmlFor="title" className="col-sm-2 col-form-label">Title</label>
+                    <div className="col-sm-10">
+                      <input 
+                        type="text" 
+                        className="form-control" 
+                        id="title" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group row align-items-center mb-3">
+                    <label htmlFor="blurb" className="col-sm-2 col-form-label">Blurb</label>
+                    <div className="col-sm-10">
+                      <textarea 
+                        className="form-control" 
+                        id="blurb" 
+                        rows={3} 
+                        value={blurb} 
+                        onChange={(e) => setBlurb(e.target.value)} 
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group row align-items-center mb-3">
+                    <label htmlFor="coverImage" className="col-sm-2 col-form-label">Cover Image</label>
+                    <div className="col-sm-10">
+                      <input 
+                        type="file" 
+                        className="form-control-file" 
+                        id="coverImage" 
+                        onChange={handleImageUpload} 
+                        style={{ fontSize: 'small' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="container mt-2 mb-2 d-flex flex-grow-1">
+                  <MarkdownEditor
+                    markdown={markdown}
+                    setMarkdown={setMarkdown}
+                    lastSavedTime={lastSavedTime}
+                  />
+                </div>
+                <div className="row justify-content-center my-5">
+                    <button
+                      className="btn btn-primary col-3 mx-3"
+                      onClick={savePost}
+                      style={{ borderRadius: 25 }}
+                    >
+                      Save Draft
+                    </button>
+                    <button
+                      onClick={generatePreview}
+                      className="btn btn-warning col-3 mx-3"
+                      style={{ borderRadius: 25 }}
+                    >
+                      Preview
+                    </button>
+                  </div>
+                  <div>
+                    <p className="mt-0">Last saved at: {formatTime(lastSavedTime)}</p>
+                  </div>
+              </>
+            ) : (
+              <>
+                <h1 className="my-5 pt-5 text-center">Preview</h1>
+                <div className="container mb-4 text-left">
+                  <TBookView is_local={true} data={previewData} />
+                </div>
+                <div className="d-flex justify-content-center my-4">
+                  <button
+                    className="btn btn-primary mx-2"
+                    onClick={handleBack}
+                    style={{ borderRadius: 25 }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="btn btn-success mx-2"
+                    onClick={handlePublish}
+                    style={{ borderRadius: 25 }}
+                  >
+                    Publish
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-          <div className="row justify-content-center my-5">
-              <button
-                className="btn btn-primary col-3 mx-3"
-                onClick={savePost}
-                style={{ borderRadius: 25 }}
-              >
-                Save Draft
-              </button>
-              <button
-                onClick={generatePreview}
-                className="btn btn-warning col-3 mx-3"
-                style={{ borderRadius: 25 }}
-              >
-                Preview
-              </button>
-            </div>
-            <div>
-              <p className="mt-0">Last saved at: {formatTime(lastSavedTime)}</p>
-            </div>
         </div>
       </div>
-    </div>
     </AuthWrapper>
   );
 };
 
-export default Editor;
+export default EditorPreview;

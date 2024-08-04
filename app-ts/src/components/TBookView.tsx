@@ -56,7 +56,7 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
             alt="Cover Image for Article"
           />
           <p className="font-italic my-2">
-            {data.author}
+            By: {data.author}
           </p>
           <p className="font-weight-light font-italic my-3 px-5 mx-5 text-muted">
             {data.blurb}
