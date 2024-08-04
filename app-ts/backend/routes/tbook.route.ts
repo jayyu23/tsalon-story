@@ -12,13 +12,11 @@ router
 router
   .route("/api/drafts/:tbsn")
   .post(auth.requireSignin, auth.hasAuthorization, tbookController.read)
-  .get(tbookController.read)
   .delete(auth.requireSignin, auth.hasAuthorization, tbookController.deleteDraft);
 
 router
   .route("/api/:username/drafts")
-  .post(tbookController.list)
-  .get(tbookController.list);
+  .post(auth.requireSignin, auth.hasAuthorization, tbookController.list)
 
 // router
 //   .route("/api/submitReview")
