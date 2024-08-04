@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import TBookView from "../components/TBookView";
+import TBookView from "../components/TBookViewLegacy";
 import NavBar from "../components/Navbar";
 
 

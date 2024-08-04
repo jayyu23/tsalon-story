@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../components/Navbar";
 
 const ErrorNoLogin: React.FC = () => {
   const navigate = useNavigate();

@@ -34,7 +34,7 @@ const update = (req: Request, res: Response, next: NextFunction) => {
             (rej) => res.status(400).json({ error: rej.message })
         );
     } else {
-        // Save and Update
+        // Save and Update - check if author is correct
         tbookModel
             .findOneAndUpdate(
                 { tbsn: fields.tbsn },

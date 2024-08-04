@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import MarkdownEditor from '../components/MarkdownEditor';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Editor: React.FC = () => {
-  const [markdown, setMarkdown] = useState<string>('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [markdown, setMarkdown] = useState<string>(location.state?.previewData?.markdown || '');
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  const [title, setTitle] = useState<string>('');
-  const [blurb, setBlurb] = useState<string>('');
+  const [title, setTitle] = useState<string>(location.state?.previewData?.title || '');
+  const [blurb, setBlurb] = useState<string>(location.state?.previewData?.blurb || '');
   const [coverImage, setCoverImage] = useState<File | null>(null);
 
   useEffect(() => {
@@ -27,6 +30,18 @@ const Editor: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       setCoverImage(event.target.files[0]);
     }
+  };
+
+  const savePost = () => { };
+
+  const generatePreview = () => {
+    const previewData = {
+      title,
+      blurb,
+      markdown,
+      coverImage: coverImage ? URL.createObjectURL(coverImage) : null,
+    };
+    navigate('/preview', { state: { previewData } });
   };
 
   return (
@@ -82,8 +97,26 @@ const Editor: React.FC = () => {
               setMarkdown={setMarkdown}
               lastSavedTime={lastSavedTime}
             />
-            <p className="mt-0">Last saved at: {formatTime(lastSavedTime)}</p>
           </div>
+          <div className="row justify-content-center my-5">
+              <button
+                className="btn btn-primary col-3 mx-3"
+                onClick={savePost}
+                style={{ borderRadius: 25 }}
+              >
+                Save Draft
+              </button>
+              <button
+                onClick={generatePreview}
+                className="btn btn-warning col-3 mx-3"
+                style={{ borderRadius: 25 }}
+              >
+                Preview
+              </button>
+            </div>
+            <div>
+              <p className="mt-0">Last saved at: {formatTime(lastSavedTime)}</p>
+            </div>
         </div>
       </div>
     </div>

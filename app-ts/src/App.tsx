@@ -29,6 +29,7 @@ import {
 import Editor from './pages/Editor';
 import TestPage from './pages/TestPage';
 import Settings from './pages/Settings';
+import Preview from './pages/Preview';
 
 
 const config = getDefaultConfig({
@@ -66,6 +67,7 @@ class App extends Component {
                     <Route path="/editor" element={<Editor />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/test" element={<TestPage />} />
+                    <Route path="/preview" element={<Preview />} />
             
                   </Routes>
                 </BrowserRouter>

@@ -4,10 +4,16 @@ import parse from 'html-react-parser';
 import ReactMarkdown from 'react-markdown';
 
 
+
+// import sanitizeHTML from "sanitize-html";
+import axios from "axios";
+// import endpoints from "../auth/endpoints";
+
 interface TBookViewProps {
   tbsn?: string;
-  is_local: boolean; // If local, then read from content. If not, then read from API
-  data?: TBookContent;
+  mode?: "draft" | "publication";
+  draftContent?: TBookContent;
+  content?: string;
 }
 
 interface TBookContent {
@@ -27,39 +33,54 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
     blurb: ""
   };
 
-  const [data, setData] = useState<TBookContent>(defaultSettings);
+  const [pub, setPub] = useState<TBookContent>(defaultSettings);
+  let { tbsn } = useParams<{ tbsn: string }>();
+  if (props.tbsn) {
+    tbsn = props.tbsn;
+  }
 
   useEffect(() => {
-    if (props.is_local) {
-      setData(props.data || defaultSettings);
-    } else {
-      // Fetch from API
-      // let { tbsn } = useParams<{ tbsn: string }>();
-      let tbsn = "";
-      if (props.tbsn) {
-        tbsn = props.tbsn;
+    const res = (acc: any) => {
+      const data: TBookContent = acc.data;
+      setPub(data);
+    };
+    const err = (rej: any) => {
+      console.log(rej);
+      window.location.href = "/error";
+    };
+
+    if (props.mode === "draft") {
+      if (props.draftContent) {
+        setPub(props.draftContent);
       }
+    } else {
+      // axios.get(endpoints.getPublicationAPI(tbsn)).then(res, err);
     }
-  
-  }, [props.is_local, props.data]);
+  }, [props.mode, props.draftContent, tbsn]);
+
+  const getBodyHTML = () => {
+    const rawHTML = props.content || pub.content;
+    // TODO: Sanitize HTML
+    return rawHTML;
+  };
 
   return (
     <div>
       <div className="justify-content-center mt-5">
         <h1 className="font-weight-bold mt-4 mb-2 mx-5 px-5 text-center">
-          {data.title}
+          {pub.title || props.draftContent?.title}
         </h1>
         <div className="text-center">
           <img
             className="mt-3 justify-content-center mx-auto"
-            src={data.coverImage}
+            src={props.draftContent?.coverImage || pub.coverImage}
             alt="Cover Image for Article"
           />
           <p className="font-italic my-2">
-            {data.author}
+            {props.mode === "draft" ? "" : "By: " + props.draftContent?.author}
           </p>
           <p className="font-weight-light font-italic my-3 px-5 mx-5 text-muted">
-            {data.blurb}
+            {pub.blurb}
           </p>
         </div>
         <div className="row d-flex justify-content-center mt-4">
@@ -67,7 +88,7 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
             className="my-4 text-left mx-5 px-5 align-left"
             style={{ maxWidth: 800 }}
           >
-            <ReactMarkdown>{data.content}</ReactMarkdown>
+            <ReactMarkdown>{props.draftContent?.content}</ReactMarkdown>
           </div>
         </div>
       </div>
@@ -76,24 +97,3 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
 };
 
 export default TBookView;
-
-
-
-  // useEffect(() => {
-  //   const res = (acc: any) => {
-  //     const data: TBookContent = acc.data;
-  //     setPub(data);
-  //   };
-  //   const err = (rej: any) => {
-  //     console.log(rej);
-  //     window.location.href = "/error";
-  //   };
-
-  //   if (props.mode === "draft") {
-  //     if (props.draftContent) {
-  //       setPub(props.draftContent);
-  //     }
-  //   } else {
-  //     // axios.get(endpoints.getPublicationAPI(tbsn)).then(res, err);
-  //   }
-  // }, [props.mode, props.draftContent, tbsn]);
