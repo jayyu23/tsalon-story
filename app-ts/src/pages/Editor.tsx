@@ -8,6 +8,7 @@ import endpoints from '../auth/endpoints';
 import { useAuth } from '../auth/useSessionStorage';
 import AuthWrapper from '../components/AuthWrapper';
 import TBookView from '../components/TBookView';
+import ImageCropper from '../components/ImageCropper';
 
 const EditorPreview: React.FC = () => {
   const images = ["blue", "green", "orange", "purple"];
@@ -21,8 +22,7 @@ const EditorPreview: React.FC = () => {
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   const [title, setTitle] = useState<string>(location.state?.title || '');
   const [blurb, setBlurb] = useState<string>(location.state?.blurb || '');
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverImageDataUrl, setCoverImageDataUrl] = useState<string>(location.state?.coverImage || defaultCoverImage);
+  const [coverImageDataUrl, setCoverImageDataUrl] = useState<string>(location.state?.coverImage);
   const [tbsn, setTbsn] = useState<number>(location.state?.tbsn || 0);
   const [loadAPI, setLoadAPI] = useState<boolean>(location.state?.loadAPI || false);
   const [isPreview, setIsPreview] = useState<boolean>(false);
@@ -40,7 +40,6 @@ const EditorPreview: React.FC = () => {
 
   useEffect(() => {
     if (loadAPI) {
-      console.log('loading API');
       const endpoint = endpoints.getDraftAPI(tbsn.toString());
       const authData = getAuthData();
       axios.post(endpoint, authData.body, authData.config)
@@ -50,30 +49,54 @@ const EditorPreview: React.FC = () => {
           setMarkdown(draft.content);
           setTitle(draft.title);
           setBlurb(draft.blurb);
+          setCoverImageDataUrl(draft.coverImage);
         })
         .catch((error) => {
           console.error(error);
         });
+    } else {
+      // Not load API - start new draft
+      fetchDefaultCoverImage();
     }
   }
   , []);
+
+  const fetchDefaultCoverImage = async () => {
+    try {
+      const response = await fetch(defaultCoverImage);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (!coverImageDataUrl) {
+          setCoverImageDataUrl(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error('Failed to fetch default cover image', error);
+    }
+  }
+
 
   const formatTime = (date: Date | null) => {
     if (!date) return '';
     return date.toLocaleTimeString();
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setCoverImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverImageDataUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     const file = event.target.files[0];
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setCoverImageDataUrl(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const handleImageCrop = (imageDataUrl: string) => {
+    setCoverImageDataUrl(imageDataUrl);
+  }
 
   const author = session?.address || 'Unknown';
 
@@ -88,14 +111,14 @@ const EditorPreview: React.FC = () => {
       blurb,
       content: markdown,
       author: authData.body.username,
-      coverImage: coverImage || defaultCoverImage
+      coverImage: coverImageDataUrl
     };
     console.log(body, authData);
     axios.post(endpoint, body, authData.config)
       .then((response) => {
         console.log(response.data);
         setTbsn(response.data.draft.tbsn);
-        sessionStorage.setItem('tbsn', response.data.draft.tbsn);
+        // sessionStorage.setItem('tbsn', response.data.draft.tbsn);
       })
       .catch((error) => {
         console.error(error)
@@ -172,13 +195,14 @@ const EditorPreview: React.FC = () => {
                   <div className="form-group row align-items-center mb-3">
                     <label htmlFor="coverImage" className="col-sm-2 col-form-label">Cover Image</label>
                     <div className="col-sm-10">
-                      <input 
+                      {/* <input 
                         type="file" 
                         className="form-control-file" 
                         id="coverImage" 
                         onChange={handleImageUpload} 
                         style={{ fontSize: 'small' }}
-                      />
+                      /> */}
+                      <ImageCropper onCropped={handleImageCrop}/>
                     </div>
                   </div>
                 </div>

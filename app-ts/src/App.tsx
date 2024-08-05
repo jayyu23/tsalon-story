@@ -30,6 +30,7 @@ import Editor from './pages/Editor';
 import TestPage from './pages/TestPage';
 import Settings from './pages/Settings';
 import Preview from './pages/Preview';
+import ImageCropper from './components/ImageCropper';
 
 
 const config = getDefaultConfig({
@@ -68,6 +69,7 @@ class App extends Component {
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/test" element={<TestPage />} />
                     <Route path="/preview" element={<Preview />} />
+                    {/* <Route path="/image" element={<ImageCropper />} /> */}
             
                   </Routes>
                 </BrowserRouter>
