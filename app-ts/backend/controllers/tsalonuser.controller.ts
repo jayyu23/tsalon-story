@@ -28,7 +28,6 @@ const requireSignin = expressjwt({
 
 const getNonce = (req: Request, res: Response) => {
     const address = req.body.address;
-    console.log('getNonce', address);
 
     if (!address) {
         return res.status(400).json({ error: 'Address is required' });

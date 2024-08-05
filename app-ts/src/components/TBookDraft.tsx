@@ -44,7 +44,8 @@ const TBookDraft: React.FC<TBookDraftProps> = (props) => {
 
   const deleteDraft = () => {
     if (tbsn !== 0) {
-      axios.delete(endpoints.getDraftAPI(tbsn.toString())).then(
+      const authData = getAuthData();
+      axios.delete(endpoints.getDraftAPI(tbsn.toString()), { ...authData.config,  data: authData.body}).then(
         (acc) => {
           window.location.reload();
         },
