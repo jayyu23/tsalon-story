@@ -31,7 +31,7 @@ const EditorPreview: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLastSavedTime(new Date());
+      // setLastSavedTime(new Date());
       // savePost();
     }, 50000);
 
@@ -119,6 +119,7 @@ const EditorPreview: React.FC = () => {
         console.log(response.data);
         setTbsn(response.data.draft.tbsn);
         // sessionStorage.setItem('tbsn', response.data.draft.tbsn);
+        setLastSavedTime(new Date());
       })
       .catch((error) => {
         console.error(error)
@@ -202,7 +203,7 @@ const EditorPreview: React.FC = () => {
                         onChange={handleImageUpload} 
                         style={{ fontSize: 'small' }}
                       /> */}
-                      <ImageCropper onCropped={handleImageCrop}/>
+                      <ImageCropper onCropped={handleImageCrop} initialImageUrl={coverImageDataUrl}/>
                     </div>
                   </div>
                 </div>
@@ -235,20 +236,19 @@ const EditorPreview: React.FC = () => {
               </>
             ) : (
               <>
-                <h1 className="my-5 pt-5 text-center">Preview</h1>
                 <div className="container mb-4 text-left">
                   <TBookView is_local={true} data={previewData} />
                 </div>
                 <div className="d-flex justify-content-center my-4">
                   <button
-                    className="btn btn-primary mx-2"
+                    className="btn btn-primary mx-3 px-5"
                     onClick={handleBack}
                     style={{ borderRadius: 25 }}
                   >
-                    Back
+                    Edit
                   </button>
                   <button
-                    className="btn btn-success mx-2"
+                    className="btn btn-success mx-3 px-5"
                     onClick={handlePublish}
                     style={{ borderRadius: 25 }}
                   >

@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
 import { Area } from 'react-easy-crop/types';
 
 interface ImageCropperProps {
   onCropped: (imageUrl: string) => void;
+  initialImageUrl?: string; // Optional prop for initial image data URL
 }
 
-const ImageCropper: React.FC<ImageCropperProps> = ({ onCropped }) => {
+const ImageCropper: React.FC<ImageCropperProps> = ({ onCropped, initialImageUrl }) => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
@@ -16,6 +17,13 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ onCropped }) => {
 
   const height = 500;
   const width = 500;
+
+  useEffect(() => {
+    if (initialImageUrl && !imageSrc) {
+      setImageSrc(initialImageUrl);
+      setCroppedImage(initialImageUrl);
+    }
+  }, [initialImageUrl]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -109,12 +117,12 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ onCropped }) => {
         </div>
       )}
       {!isCropping && croppedImage && (
-        <div className='d-flex flex-column mx-5'>
+        <div className='d-flex flex-column mx-5 my-4'>
           <img src={croppedImage} alt="Cover Image" />
           <button className="btn rounded-pill btn-warning mx-5 my-4" onClick={handleEdit}>Edit</button>
         </div>
       )}
-      <canvas className="mx-5 w-50" id="croppedCanvas" style={{ display: 'none' }} />
+      <canvas className="mx-5 w-25" id="croppedCanvas" style={{ display: 'none' }} />
     </div>
   );
 };
