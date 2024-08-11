@@ -100,12 +100,9 @@ const EditorPreview: React.FC = () => {
 
   const author = session?.address || 'Unknown';
 
-  const savePost = () => {
-    console.log('saving post');
-    const endpoint = endpoints.getDraftSaveAPI();
+  const getPostData = () => {
     const authData = getAuthData();
-
-    const body = {
+    return {
       tbsn,
       title,
       blurb,
@@ -113,6 +110,14 @@ const EditorPreview: React.FC = () => {
       author: authData.body.username,
       coverImage: coverImageDataUrl
     };
+  }
+
+  const savePost = () => {
+    console.log('saving post');
+    const endpoint = endpoints.getDraftSaveAPI();
+    const authData = getAuthData();
+
+    const body = getPostData();
     console.log(body, authData);
     axios.post(endpoint, body, authData.config)
       .then((response) => {
@@ -137,13 +142,16 @@ const EditorPreview: React.FC = () => {
   };
 
   const handlePublish = () => {
-    // Publish the post
-    // axios.post(endpoints.publishAPI(), {
-    //   title,
-    //   blurb,
-    //   markdown,
-    //   coverImage,
-    // });
+
+    const post = getPostData();
+    const auth = getAuthData();
+
+    const body = {
+      ...post,
+      ...auth.body,
+      pubMode: 'green'
+    };
+    axios.post(endpoints.getDraftSubmitAPI(), body, auth.config);
     navigate("/");
   };
 

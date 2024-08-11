@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import tbookModel from '../models/tbook.model';
 // import tsalonmessageController from './tsalonmessage.controller';
-// import tsalonuserModel from '../models/tsalonuser.model';
+import tsalonuserModel from '../models/tsalonuser.model';
 // import blockchainController from './blockchain.controller';
 
 // Define custom interfaces for the request object
@@ -141,68 +141,68 @@ const deleteDraft = (req: IRequestWithDraft, res: Response) => {
 };
 
 // TODO: Implement this function
-// const submitForReview = (req: Request, res: Response) => {
-//     const fields = req.body;
-//     const tbsn = fields.tbsn;
-//     const pubMode = fields.pubMode;
+const submitForReview = (req: Request, res: Response) => {
+    const fields = req.body;
+    const tbsn = fields.tbsn;
+    const pubMode = fields.pubMode;
 
-//     if (!tbsn) {
-//         return res.status(400).json({ success: false, message: 'No TBSN found' });
-//     }
+    if (!tbsn) {
+        return res.status(400).json({ success: false, message: 'No TBSN found' });
+    }
 
-//     if (pubMode === 'green') {
-//         tbookModel.findOneAndUpdate({ tbsn }, { $set: { stage: 'publish', reviewDate: new Date() } }).then(
-//             (acc) => {
-//                 if (acc) {
-//                     tsalonuserModel.findOneAndUpdate({ username: acc.author }, { $inc: { greenTokens: -1 } }).exec();
-//                     // Publish onto the Blockchain
-//                     blockchainController.publish(tbsn);
-//                     tsalonmessageController.logMessage(
-//                         acc.author,
-//                         'TSalon',
-//                         `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
-//                         `Congratulations! Your writing "${acc.title}" has been self-published as TBook #${tbsn}. 
-//                          As the author, you will receive a free mint of the NFT. Users can view this TBook publicly at tsalon.io/view/${tbsn}`,
-//                         new Date()
-//                     );
-//                     res.status(200).json({ success: true });
-//                 } else {
-//                     res.status(400).json({ success: false, message: 'Update failed' });
-//                 }
-//             },
-//             (rej) => res.status(400).json({ success: false, message: rej.message })
-//         );
-//     } else {
-//         // Then set the stage for review
-//         tbookModel
-//             .findOneAndUpdate(
-//                 { tbsn },
-//                 {
-//                     $set: {
-//                         stage: 'review',
-//                         reviewDate: new Date(),
-//                     },
-//                 }
-//             )
-//             .then(
-//                 (acc) => {
-//                     if (acc) {
-//                         tsalonmessageController.logMessage(
-//                             acc.author,
-//                             'TSalon',
-//                             `Draft #${acc.tbsn} – "${acc.title}" Submitted for Review`,
-//                             tsalonmessageController.reviewMessage,
-//                             new Date()
-//                         );
-//                         res.status(200).json({ success: true });
-//                     } else {
-//                         res.status(400).json({ success: false, message: 'Update failed' });
-//                     }
-//                 },
-//                 (rej) => res.status(400).json({ success: false, message: rej.message })
-//             );
-//     }
-// };
+    if (pubMode === 'green') {
+        tbookModel.findOneAndUpdate({ tbsn }, { $set: { stage: 'publish', reviewDate: new Date() } }).then(
+            (acc) => {
+                if (acc) {
+                    // tsalonuserModel.findOneAndUpdate({ username: acc.author }, { $inc: { greenTokens: -1 } }).exec();
+                    // Publish onto the Blockchain
+                    // blockchainController.publish(tbsn);
+                    // tsalonmessageController.logMessage(
+                    //     acc.author,
+                    //     'TSalon',
+                    //     `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
+                    //     `Congratulations! Your writing "${acc.title}" has been self-published as TBook #${tbsn}. 
+                    //      As the author, you will receive a free mint of the NFT. Users can view this TBook publicly at tsalon.io/view/${tbsn}`,
+                    //     new Date()
+                    // );
+                    res.status(200).json({ success: true });
+                } else {
+                    res.status(400).json({ success: false, message: 'Update failed' });
+                }
+            },
+            (rej) => res.status(400).json({ success: false, message: rej.message })
+        );
+    } else {
+        // Then set the stage for review
+        tbookModel
+            .findOneAndUpdate(
+                { tbsn },
+                {
+                    $set: {
+                        stage: 'review',
+                        reviewDate: new Date(),
+                    },
+                }
+            )
+            .then(
+                (acc) => {
+                    if (acc) {
+                        // tsalonmessageController.logMessage(
+                        //     acc.author,
+                        //     'TSalon',
+                        //     `Draft #${acc.tbsn} – "${acc.title}" Submitted for Review`,
+                        //     tsalonmessageController.reviewMessage,
+                        //     new Date()
+                        // );
+                        res.status(200).json({ success: true });
+                    } else {
+                        res.status(400).json({ success: false, message: 'Update failed' });
+                    }
+                },
+                (rej) => res.status(400).json({ success: false, message: rej.message })
+            );
+    }
+};
 
 export default {
     update,
@@ -212,7 +212,7 @@ export default {
     getFromUsername,
     getFromTBSN,
     deleteDraft,
-    // submitForReview,
+    submitForReview,
     publicList,
     publicRead,
 };

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import TBook from "./TBook";
 import axios from "axios";
-// import endpoints from "../auth/endpoints";
+import endpoints from "../auth/endpoints";
 
 interface Publication {
   tbsn?: string;
@@ -23,11 +23,11 @@ class TBookStore extends Component<{}, TBookStoreState> {
   }
 
   componentDidMount() {
-    // axios.get(endpoints.getAllPubAPI()).then((response) => {
-    //   this.setState({ publications: response.data });
-    // });
-    this.setState({
-      publications: [
+      axios.get(endpoints.getAllPubAPI()).then((response) => {
+        this.setState({ publications: response.data });
+      });
+
+    const defaultPublications: Publication[] = [
         {
           tbsn: "1",
           title: "The Great Gatsby",
@@ -52,7 +52,9 @@ class TBookStore extends Component<{}, TBookStoreState> {
           blurb:
             "The Picture of Dorian Gray is a Gothic and philosophical novel by Oscar Wilde, first published complete in the July 1890 issue of Lippincott's Monthly Magazine. Fearing the story was indecent, the magazine's editor deleted roughly five hundred words before publication without Wilde's knowledge.",
         },
-      ],
+      ];
+
+    this.setState({
     });
   }
 
@@ -72,7 +74,7 @@ class TBookStore extends Component<{}, TBookStoreState> {
   render() {
     const filteredPublications = this.filterPublications();
     return (
-      <div>
+      <div className='vw-100 vh-100 d-flex flex-column'>
         <h1 className="text-center pb-4 mt-5 pt-3">TBookstore</h1>
         <div className="row justify-content-center my-5">
           <input

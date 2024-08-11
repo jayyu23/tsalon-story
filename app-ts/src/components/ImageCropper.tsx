@@ -101,7 +101,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ onCropped, initialImageUrl 
     <div className='my-3'>
       <input type="file" accept="image/*" onChange={handleImageUpload} />
       {isCropping && imageSrc && (
-        <div className='d-flex flex-column mx-5 my-3'>
+        <div className='d-flex flex-column align-items-center mx-5 my-4'>
           <div style={{ position: 'relative', width: '100%', height: 400 }}>
             <Cropper
               image={imageSrc}
@@ -113,13 +113,24 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ onCropped, initialImageUrl 
               onCropComplete={onCropComplete}
             />
           </div>
-          <button className="btn rounded-pill btn-success mx-5 my-4" onClick={handleCropSave}>Crop</button>
+          <button className="btn rounded-pill btn-success mt-3"
+          onClick={handleCropSave}
+          >Crop</button>
         </div>
       )}
       {!isCropping && croppedImage && (
-        <div className='d-flex flex-column mx-5 my-4'>
-          <img src={croppedImage} alt="Cover Image" />
-          <button className="btn rounded-pill btn-warning mx-5 my-4" onClick={handleEdit}>Edit</button>
+        <div className='d-flex flex-column align-items-center mx-5 my-4'>
+          <img 
+            src={croppedImage} 
+            alt="Cover Image" 
+            style={{ width: '350px', height: '350px', objectFit: 'cover' }} 
+          />
+          <button 
+            className="btn rounded-pill btn-warning mt-3 px-4" 
+            onClick={handleEdit}
+          >
+            Edit
+          </button>
         </div>
       )}
       <canvas className="mx-5 w-25" id="croppedCanvas" style={{ display: 'none' }} />

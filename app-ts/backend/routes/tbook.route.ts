@@ -18,9 +18,10 @@ router
   .route("/api/:username/drafts")
   .post(auth.requireSignin, auth.hasAuthorization, tbookController.list)
 
-// router
-//   .route("/api/submitReview")
-//   .post(auth.requireSignin, tbookController.submitForReview);
+router
+  .route("/api/submitReview")
+  .post(auth.requireSignin, tbookController.submitForReview);
+
 
 router.route("/api/publications").get(tbookController.publicList);
 router.route("/api/publication/:tbsn").get(tbookController.publicRead);
