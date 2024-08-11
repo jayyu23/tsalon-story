@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import parse from 'html-react-parser';
 import ReactMarkdown from 'react-markdown';
+import axios from "axios";
+import endpoints from "../auth/endpoints";
 
 
 interface TBookViewProps {
@@ -34,11 +36,11 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
       setData(props.data || defaultSettings);
     } else {
       // Fetch from API
-      // let { tbsn } = useParams<{ tbsn: string }>();
-      let tbsn = "";
-      if (props.tbsn) {
-        tbsn = props.tbsn;
-      }
+      const tbsn = props.tbsn;
+      const endpoint = endpoints.getPublicationAPI(tbsn || "");
+      axios.get(endpoint).then((res) => {
+        setData(res.data);
+      });
     }
   
   }, [props.is_local, props.data]);

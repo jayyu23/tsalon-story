@@ -66,6 +66,7 @@ class TBookStore extends Component<{}, TBookStoreState> {
     const { publications, searchQuery } = this.state;
     return publications.filter(
       (publication) =>
+        publication.tbsn?.toString().includes(searchQuery.toLowerCase()) ||
         publication.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         publication.author?.toLowerCase().includes(searchQuery.toLowerCase())
     );

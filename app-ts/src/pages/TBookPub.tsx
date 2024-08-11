@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import TBookView from "../components/TBookViewLegacy";
+import TBookView from "../components/TBookView";
 import NavBar from "../components/Navbar";
 
 
@@ -13,10 +13,10 @@ const TBookPub: React.FC = () => {
   const { tbsn } = useParams<RouteParams>();
 
   return (
-    <div>
+    <div className='vw-100 vh-100 d-flex flex-column'>
       <NavBar />
       <div className="container justify-content-center mt-5 pt-3">
-        <TBookView tbsn={tbsn} />
+        <TBookView tbsn={tbsn} is_local={false} />
 
         <span className="row px-5 justify-content-center mb-5">
           <a

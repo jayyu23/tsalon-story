@@ -10,7 +10,7 @@ import Home from './pages/Home';
 import Error404 from './pages/Error404';
 import TBookPub from './pages/TBookPub';
 import Drafts from './pages/Drafts';
-import Notifications from './pages/Notifications';
+import Notifications from './pages/UserHome';
 import PrivateShelf from './pages/PrivateShelf';
 
 // Import Wagmi
