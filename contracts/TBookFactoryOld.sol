@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract TBookFactory is Ownable, ERC721 {
+contract TBookFactoryOld is Ownable, ERC721 {
     // A Copy of a Book
     struct CopyInfo {
         // Basics
