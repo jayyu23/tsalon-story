@@ -59,6 +59,7 @@ contract TBookFactory is ERC721, Ownable {
         uint256 tokenId = generateTokenId(tbsn, 0);
         _safeMint(msg.sender, tokenId);
         ownedTBooks[author].add(tokenId);
+
     }
 
     // Function to mint additional copies
@@ -71,9 +72,16 @@ contract TBookFactory is ERC721, Ownable {
         require(msg.value >= cost, "Insufficient payment");
 
         uint256 tokenId = generateTokenId(tbsn, book.current_copies + 1);
+        console.log("TokenID %s", tokenId);
         _safeMint(msg.sender, tokenId);
         ownedTBooks[msg.sender].add(tokenId);
         book.current_copies++;
+
+        bool userOwnsCopy = ownedTBooks[msg.sender].contains(tokenId);
+        console.log("User %s owns copy: %s", msg.sender, userOwnsCopy);
+
+        // Send payment to author
+        payable(book.author).transfer(msg.value);
         
     }
 
@@ -83,7 +91,7 @@ contract TBookFactory is ERC721, Ownable {
     }
 
     // Utility function to generate a unique token ID
-    function generateTokenId(uint256 tbsn, uint256 copyNumber) internal pure returns (uint256) {
+    function generateTokenId(uint256 tbsn, uint256 copyNumber) public pure returns (uint256) {
         return tbsn * 10000 + copyNumber;
     }
 
