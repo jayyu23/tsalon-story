@@ -58,4 +58,19 @@ const getOwnedTBooks = (req: any, res: any, next: NextFunction) => {
         });
 }
 
-export default { getTBookNFT, getOwnedTBooks };
+const publishTBook = (req: any, res: any, next: NextFunction) => {
+    type PublishFields = { tbsn: number, address: string, copies: number };
+    // To replace this in a POST request.
+    const fields: PublishFields = {tbsn: 75008, address: '0x4d8C2208d5E47d05405811a3352dCcBa1019D0Cc', copies: 100};
+    tBookFactory.write.createTBook([BigInt(fields.tbsn), BigInt(fields.copies), fields.address], {
+        client: { wallet: walletClient },
+    }).then((tx) => {
+        res.status(200).json({ message: 'TBook published', tx: tx });
+    }
+    ).catch((error) => {
+        res.status(500).json({ message: error.message });
+    });
+}
+
+
+export default { getTBookNFT, getOwnedTBooks, publishTBook };

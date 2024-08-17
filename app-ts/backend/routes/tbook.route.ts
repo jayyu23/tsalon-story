@@ -30,6 +30,9 @@ router.route("/api/publication/:tbsn").get(tbookController.publicRead);
 router.route("/api/nft/:tbsn").get(blockchainController.getTBookNFT);
 router.route("/api/getOwnedTBooks/:address").get(blockchainController.getOwnedTBooks);
 
+// To replace with POST
+router.route("/api/publishNFT").get(blockchainController.publishTBook);
+
 // router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
 router.route("/api/testPub").get(tbookController.create);
