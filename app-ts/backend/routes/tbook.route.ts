@@ -1,6 +1,7 @@
 import express from "express";
 import tbookController from "../controllers/tbook.controller";
 import auth from "../controllers/tsalonuser.controller";
+import blockchainController from "../controllers/blockchain.controller";
 // import blockchainController from "../controllers/blockchain.controller";
 
 const router = express.Router();
@@ -25,6 +26,10 @@ router
 
 router.route("/api/publications").get(tbookController.publicList);
 router.route("/api/publication/:tbsn").get(tbookController.publicRead);
+
+router.route("/api/nft/:tbsn").get(blockchainController.getTBookNFT);
+router.route("/api/getOwnedTBooks/:address").get(blockchainController.getOwnedTBooks);
+
 // router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
 router.route("/api/testPub").get(tbookController.create);

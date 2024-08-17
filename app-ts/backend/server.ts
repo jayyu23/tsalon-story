@@ -14,7 +14,7 @@ import TSalonUserModel from "./models/tsalonuser.model";
  * @property {string} mongoUri - The MongoDB connection URI.
  */
 require('dotenv').config({ path: __dirname + '/../../.env' });
-console.log('Init - Loading environment variables from %s.', __dirname + '/../.env');
+console.log('Init - Loading environment variables from %s.', __dirname + '/../../.env');
 
 const config = {
   port: process.env.PORT || 8000,

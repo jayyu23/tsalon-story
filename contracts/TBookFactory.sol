@@ -120,4 +120,8 @@ contract TBookFactory is ERC721, Ownable {
     function getOwnedTBooks(address owner) external view returns (uint256[] memory) {
         return ownedTBooks[owner].values();
     }
+
+    function getAllTBooks() external view returns (uint256[] memory) {
+        return tbsnSet.values();
+    }
 }
