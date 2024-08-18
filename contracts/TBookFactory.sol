@@ -66,7 +66,7 @@ contract TBookFactory is ERC721, Ownable {
     function mintCopy(uint256 tbsn) external payable {
         TBook storage book = tbooks[tbsn];
         require(book.tbsn == tbsn, "TBook does not exist");
-        require(book.current_copies < book.total_copies, "No more copies can be minted");
+        require(book.current_copies + 1 < book.total_copies, "No more copies can be minted");
 
         uint256 cost = getCurrentPrice(tbsn);
         require(msg.value >= cost, "Insufficient payment");

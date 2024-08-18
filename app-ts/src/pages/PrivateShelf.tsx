@@ -3,9 +3,11 @@ import NavBar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import UserCollection from "../components/Collection";
 import AuthWrapper from "../components/AuthWrapper";
+import { useAuth } from "../auth/useSessionStorage";
 
 const PrivateShelf: React.FC = () => {
-  const username = JSON.parse(window.sessionStorage.session).address; // Read this from sessionStorage
+  const { session } = useAuth();
+  const username = session?.address;
 
   return (
     <AuthWrapper>

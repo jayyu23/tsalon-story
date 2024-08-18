@@ -149,10 +149,11 @@ const EditorPreview: React.FC = () => {
     const body = {
       ...post,
       ...auth.body,
-      pubMode: 'green'
+      pubMode: 'green',
+      copies: '1000'
     };
     axios.post(endpoints.getDraftSubmitAPI(), body, auth.config);
-    navigate("/");
+    navigate("/drafts");
   };
 
   const previewData = {
@@ -204,13 +205,6 @@ const EditorPreview: React.FC = () => {
                   <div className="form-group row align-items-center mb-3">
                     <label htmlFor="coverImage" className="col-sm-2 col-form-label">Cover Image</label>
                     <div className="col-sm-10">
-                      {/* <input 
-                        type="file" 
-                        className="form-control-file" 
-                        id="coverImage" 
-                        onChange={handleImageUpload} 
-                        style={{ fontSize: 'small' }}
-                      /> */}
                       <ImageCropper onCropped={handleImageCrop} initialImageUrl={coverImageDataUrl}/>
                     </div>
                   </div>

@@ -29,10 +29,11 @@ const UserCollection: React.FC<UserCollectionProps> = (props) => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
+    // setUsernameDisplay(");
     axios.get<UserCollectionData>(endpoints.getUserCollectionAPI(username)).then(
       (response) => {
         setCollected(response.data.tbooks);
-        setUsernameDisplay(response.data.username + "'s Bookshelf");
+        // setUsernameDisplay(response.data.username + "'s Bookshelf");
         setLoaded(true);
       },
       (error) => {
@@ -43,8 +44,10 @@ const UserCollection: React.FC<UserCollectionProps> = (props) => {
 
   const loadedContent = (
     <div className="container w-100 pt-5">
-      <h1 className="text-center pt-5">{usernameDisplay || "Loading..."}</h1>
-      {/* 
+      {/* <h1 className="text-center pt-5">{usernameDisplay || "Loading..."}</h1> */}
+      <h1 className="text-center pt-5">Collection</h1>
+      <p>User: { username }</p>
+      
       <ul className="nav nav-pills nav-fill my-5">
         <li className="nav-item">
           <a id="t1" className="nav-link active" href="#">
@@ -57,7 +60,7 @@ const UserCollection: React.FC<UserCollectionProps> = (props) => {
           </a>
         </li>
       </ul> 
-      */}
+     
       <div className="row justify-content-center px-0 w-100 py-3">
         {collected.map((data) => (
           <TBook

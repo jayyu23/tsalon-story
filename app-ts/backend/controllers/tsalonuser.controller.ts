@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import { verifyMessage } from 'viem'
 
 // import config from '../../config/config';
-// import blockchainController from './blockchain.controller';
+import blockchainController from './blockchain.controller';
 import tbookModel from '../models/tbook.model';
 // import tsalonmessageController from './tsalonmessage.controller';
 
@@ -133,23 +133,19 @@ const passedAuthentication = (req: Request, res: Response) => {
 //     );
 // };
 
-// const getCollection = (req: Request, res: Response) => {
-//     const walletAddress = req.walletAddress;
-//     blockchainController.getUserCollection(walletAddress).then(
-//         (acc) => {
-//             const chainData = acc;
-//             const tbooks = chainData.map((t) => t.tbsn);
-//             tbookModel.find({ tbsn: { $in: tbooks }, stage: 'publish' })
-//                 .sort({ tbsn: -1 })
-//                 .exec()
-//                 .then(
-//                     (acc) => res.status(200).json({ success: true, tbooks: acc, chainData, username: req.username }),
-//                     (rej) => res.status(400).json({ success: false, error: rej })
-//                 );
-//         },
-//         (rej) => res.status(400).json({ success: false, error: rej })
-//     );
-// };
+const getCollection = async (req: any, res: any) => {
+    try {
+        const walletAddress = req.params.username;
+        console.log('getCollection', walletAddress);
+        const results = await blockchainController.getCollection(walletAddress);
+        const nfts = results.collection.map((t: {tbsn: string, copyNumber: string}) => t.tbsn);
+        const tbooks = await tbookModel.find({ tbsn: { $in: nfts }, stage: 'publish' }).exec();
+        res.status(200).json({ success: true, tbooks, nfts });
+    } catch (error) {
+        res.status(500).json({ success: false, error });   
+    }
+
+};
 
 // const getAddressFromUsername = (req: Request, res: Response, next: NextFunction, username: string) => {
 //     const usernameFiltered = username.replace(/_/g, ' ');
@@ -190,7 +186,7 @@ export default {
     hasAuthorization,
     passedAuthentication,
     // getAddressFromUsername,
-    // getCollection,
+    getCollection,
     // userIsHolder,
     getGreenTokens,
 };

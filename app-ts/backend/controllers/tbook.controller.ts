@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import tbookModel from '../models/tbook.model';
 // import tsalonmessageController from './tsalonmessage.controller';
 import tsalonuserModel from '../models/tsalonuser.model';
-// import blockchainController from './blockchain.controller';
+import blockchainController from './blockchain.controller';
 
 // Define custom interfaces for the request object
 interface IRequestWithDraft extends Request {
@@ -156,6 +156,9 @@ const submitForReview = (req: Request, res: Response) => {
                 if (acc) {
                     // tsalonuserModel.findOneAndUpdate({ username: acc.author }, { $inc: { greenTokens: -1 } }).exec();
                     // Publish onto the Blockchain
+                    blockchainController.publishTBook(req, res);
+
+
                     // blockchainController.publish(tbsn);
                     // tsalonmessageController.logMessage(
                     //     acc.author,

@@ -21,21 +21,19 @@ router
 
 router
   .route("/api/submitReview")
-  .post(auth.requireSignin, tbookController.submitForReview);
+  .post(auth.requireSignin, auth.hasAuthorization, tbookController.submitForReview);
 
 
 router.route("/api/publications").get(tbookController.publicList);
 router.route("/api/publication/:tbsn").get(tbookController.publicRead);
 
 router.route("/api/nft/:tbsn").get(blockchainController.getTBookNFT);
-router.route("/api/getOwnedTBooks/:address").get(blockchainController.getOwnedTBooks);
 
-// To replace with POST
-router.route("/api/publishNFT").get(blockchainController.publishTBook);
+router.route("/api/publishNFT").post(auth.requireSignin, auth.hasAuthorization, blockchainController.publishTBook);
 
 // router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
-router.route("/api/testPub").get(tbookController.create);
+// router.route("/api/testPub").get(tbookController.create);
 
 router.param("username", tbookController.getFromUsername);
 router.param("tbsn", tbookController.getFromTBSN);
