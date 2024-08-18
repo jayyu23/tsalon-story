@@ -13,7 +13,7 @@ const WalletFunction: React.FC = () => {
   const { isConnected, address, chain, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
-  const { setSession, clearSession, session } = useAuth();
+  const { setSession, clearSession, session, isLoggedIn } = useAuth();
 
   const login = async (address: string) => {
     console.log("Login called");
@@ -56,13 +56,14 @@ const WalletFunction: React.FC = () => {
 
   React.useEffect(() => {
     console.log(isConnected, address, chain);
+
     if (isConnecting) {
       console.log("is connecting...")
       return;
     }
 
     if (session) {
-      if (!isConnected) {
+      if (!isConnected && !isConnecting) {
         console.log("Session exists but not connected");
         disconnect();
         clearSession();

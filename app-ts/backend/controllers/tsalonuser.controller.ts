@@ -137,10 +137,15 @@ const getCollection = async (req: any, res: any) => {
     try {
         const walletAddress = req.params.username;
         console.log('getCollection', walletAddress);
-        const results = await blockchainController.getCollection(walletAddress);
-        const nfts = results.collection.map((t: {tbsn: string, copyNumber: string}) => t.tbsn);
-        const tbooks = await tbookModel.find({ tbsn: { $in: nfts }, stage: 'publish' }).exec();
-        res.status(200).json({ success: true, tbooks, nfts });
+        const nfts = await blockchainController.getCollection(walletAddress);
+        const collectionTBSN = nfts.collection.map((t: {tbsn: string, copyNumber: string}) => t.tbsn);
+        const authorTBSN = nfts.authored; // Only a list of TBSNs
+        const collection = await tbookModel.find({ tbsn: { $in: collectionTBSN }, stage: 'publish' }).exec();
+        const authored = await tbookModel.find({ tbsn: { $in: authorTBSN }, stage: 'publish' }).exec();
+        res.status(200).json({ success: true, tbooks: {
+            collection,
+            authored,
+        }, nfts });
     } catch (error) {
         res.status(500).json({ success: false, error });   
     }

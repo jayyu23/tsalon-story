@@ -15,10 +15,11 @@ const logoUrl = "/assets/logo_circle.png";
 
 const TopNavbar: React.FC = () => {
   const { isLoggedIn } = useAuth();
-  const { isConnected } = useAccount();
+  const { isConnected, isConnecting } = useAccount();
 
-  const visibleNavItems = navItems.filter(item => !item.protected || isConnected );
+  const visibleNavItems = navItems.filter(item => !item.protected || (isConnected || isConnecting) );
 
+  
   return (
     <nav className="navbar">
       <div className="nav-items">

@@ -141,44 +141,39 @@ const deleteDraft = (req: IRequestWithDraft, res: Response) => {
 };
 
 // TODO: Implement this function
-const submitForReview = (req: Request, res: Response) => {
-    const fields = req.body;
-    const tbsn = fields.tbsn;
-    const pubMode = fields.pubMode;
+const submitForReview = async (req: Request, res: Response) => {
+    try {
+        const fields = req.body;
+        const tbsn = fields.tbsn;
+        const pubMode = fields.pubMode;
 
-    if (!tbsn) {
-        return res.status(400).json({ success: false, message: 'No TBSN found' });
-    }
+        if (!tbsn) {
+            return res.status(400).json({ success: false, message: 'No TBSN found' });
+        }
 
-    if (pubMode === 'green') {
-        tbookModel.findOneAndUpdate({ tbsn }, { $set: { stage: 'publish', reviewDate: new Date() } }).then(
-            (acc) => {
-                if (acc) {
-                    // tsalonuserModel.findOneAndUpdate({ username: acc.author }, { $inc: { greenTokens: -1 } }).exec();
-                    // Publish onto the Blockchain
-                    blockchainController.publishTBook(req, res);
+        if (pubMode === 'green') {
+            const acc = await tbookModel.findOneAndUpdate({ tbsn }, { $set: { stage: 'publish', reviewDate: new Date() } });
+            if (acc) {
+                // tsalonuserModel.findOneAndUpdate({ username: acc.author }, { $inc: { greenTokens: -1 } }).exec();
+                // Publish onto the Blockchain
+                const tx = await blockchainController.publishTBook(req, res);
 
-
-                    // blockchainController.publish(tbsn);
-                    // tsalonmessageController.logMessage(
-                    //     acc.author,
-                    //     'TSalon',
-                    //     `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
-                    //     `Congratulations! Your writing "${acc.title}" has been self-published as TBook #${tbsn}. 
-                    //      As the author, you will receive a free mint of the NFT. Users can view this TBook publicly at tsalon.io/view/${tbsn}`,
-                    //     new Date()
-                    // );
-                    res.status(200).json({ success: true });
-                } else {
-                    res.status(400).json({ success: false, message: 'Update failed' });
-                }
-            },
-            (rej) => res.status(400).json({ success: false, message: rej.message })
-        );
-    } else {
-        // Then set the stage for review
-        tbookModel
-            .findOneAndUpdate(
+                // blockchainController.publish(tbsn);
+                // tsalonmessageController.logMessage(
+                //     acc.author,
+                //     'TSalon',
+                //     `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
+                //     `Congratulations! Your writing "${acc.title}" has been self-published as TBook #${tbsn}. 
+                //      As the author, you will receive a free mint of the NFT. Users can view this TBook publicly at tsalon.io/view/${tbsn}`,
+                //     new Date()
+                // );
+                return res.status(200).json({ success: true, tx });
+            } else {
+                return res.status(400).json({ success: false, message: 'Update failed' });
+            }
+        } else {
+            // Then set the stage for review
+            const acc = await tbookModel.findOneAndUpdate(
                 { tbsn },
                 {
                     $set: {
@@ -186,24 +181,22 @@ const submitForReview = (req: Request, res: Response) => {
                         reviewDate: new Date(),
                     },
                 }
-            )
-            .then(
-                (acc) => {
-                    if (acc) {
-                        // tsalonmessageController.logMessage(
-                        //     acc.author,
-                        //     'TSalon',
-                        //     `Draft #${acc.tbsn} – "${acc.title}" Submitted for Review`,
-                        //     tsalonmessageController.reviewMessage,
-                        //     new Date()
-                        // );
-                        res.status(200).json({ success: true });
-                    } else {
-                        res.status(400).json({ success: false, message: 'Update failed' });
-                    }
-                },
-                (rej) => res.status(400).json({ success: false, message: rej.message })
             );
+            if (acc) {
+                // tsalonmessageController.logMessage(
+                //     acc.author,
+                //     'TSalon',
+                //     `Draft #${acc.tbsn} – "${acc.title}" Submitted for Review`,
+                //     tsalonmessageController.reviewMessage,
+                //     new Date()
+                // );
+                return res.status(200).json({ success: true });
+            } else {
+                return res.status(400).json({ success: false, message: 'Update failed' });
+            }
+        }
+    } catch (error) {
+        return res.status(400).json({ success: false, error });
     }
 };
 

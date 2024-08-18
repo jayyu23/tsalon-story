@@ -3,6 +3,7 @@ import { sepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import { abi as TBookFactoryABI } from '../../../artifacts/contracts/TBookFactory.sol/TBookFactory.json';
 import { NextFunction } from 'express';
+import { get } from 'lodash';
 
 require('dotenv').config({ path: __dirname + '/../../../.env' });
 console.log('Init - Loading environment variables from %s.', __dirname + '../../../.env');
@@ -43,6 +44,10 @@ const getTBookNFT = async (req: any, res: any) => {
   }
 }
 
+const getTBSNCopy = (id: bigint) => {
+  return { tbsn: (id / BigInt(10000)).toString(), copyNumber: (id % BigInt(10000)).toString() };
+}
+
 const getCollection = async (address: string) => {
   console.log("Getting collection for address", address);
   const tBooks: any = await tBookFactory.read.getOwnedTBooks([address]);
@@ -52,12 +57,8 @@ const getCollection = async (address: string) => {
   // Convert BigInt array to string array
   return {
     address: address,
-    collection: tBooks.map((tBook: bigint) => {
-      const tbsn = (tBook / BigInt(10000)).toString();
-      const copyNumber = (tBook % BigInt(10000)).toString();
-      return { tbsn, copyNumber };
-    }),
-    authored: authoredTBooks.map((tBook: bigint) => tBook.toString())
+    collection: tBooks.map((tBook: bigint) => getTBSNCopy(tBook)),
+    authored: authoredTBooks.map((tBook: bigint) => tBook.toString()),
   };
 }
 
@@ -73,7 +74,7 @@ const publishTBookNFT = async (fields: PublishFields) => {
       client: { wallet: walletClient },
     });
     console.log({ message: 'TBook published', tx: tx });
-    return { status: "success", message: 'TBook published', tx: tx };
+    return tx;
   } catch (error) {
     throw error;
   }
@@ -82,10 +83,10 @@ const publishTBookNFT = async (fields: PublishFields) => {
 const publishTBook = async (req: any, res: any) => {
   try {
     const fields: PublishFields = { tbsn: req.body.tbsn, address: req.body.walletAddress, copies: req.body.copies };
-    const result = await publishTBookNFT(fields);
-    res.status(200).json(result);
+    const tx = await publishTBookNFT(fields);
+    return tx;
   } catch (error) {
-    res.status(500).json({ error });
+    throw error;
   }
 }
 

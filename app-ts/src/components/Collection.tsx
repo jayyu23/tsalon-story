@@ -18,61 +18,74 @@ interface TBookData {
 }
 
 interface UserCollectionData {
-  tbooks: TBookData[];
+  tbooks: { collection: TBookData[]; authored: TBookData[] };
   username: string;
 }
 
-const UserCollection: React.FC<UserCollectionProps> = (props) => {
-  const { username, disableLoad } = props;
-  const [collected, setCollected] = useState<TBookData[]>([]);
-  const [usernameDisplay, setUsernameDisplay] = useState<string>("");
+const UserCollection: React.FC<UserCollectionProps> = ({ username, disableLoad }) => {
+  const [collectedBooks, setCollectedBooks] = useState<TBookData[]>([]);
+  const [authoredBooks, setAuthoredBooks] = useState<TBookData[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("collected");
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    // setUsernameDisplay(");
     axios.get<UserCollectionData>(endpoints.getUserCollectionAPI(username)).then(
       (response) => {
-        setCollected(response.data.tbooks);
-        // setUsernameDisplay(response.data.username + "'s Bookshelf");
+        setCollectedBooks(response.data.tbooks.collection);
+        setAuthoredBooks(response.data.tbooks.authored);
         setLoaded(true);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }, [username]);
 
+  const tabItems = [
+    { id: "collected", label: `Collected (${collectedBooks.length})` },
+    { id: "published", label: `Published (${authoredBooks.length})` },
+  ];
+
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+  };
+
+  const renderBooks = (books: TBookData[]) => (
+    <div className="row justify-content-center px-0 w-100 py-3">
+      {books.map((book) => (
+        <TBook
+          key={book.tbsn}
+          tbsn={book.tbsn}
+          title={book.title}
+          blurb={book.blurb}
+          author={book.author}
+          coverImage={book.coverImage}
+        />
+      ))}
+    </div>
+  );
+
   const loadedContent = (
     <div className="container w-100 pt-5">
-      {/* <h1 className="text-center pt-5">{usernameDisplay || "Loading..."}</h1> */}
       <h1 className="text-center pt-5">Collection</h1>
-      <p>User: { username }</p>
-      
+      <p>User: {username}</p>
+
       <ul className="nav nav-pills nav-fill my-5">
-        <li className="nav-item">
-          <a id="t1" className="nav-link active" href="#">
-            {`Collected (${collected.length})`}
-          </a>
-        </li>
-        <li className="nav-item">
-          <a id="t2" className="nav-link" href="#">
-            {`Published (${0})`}
-          </a>
-        </li>
-      </ul> 
-     
-      <div className="row justify-content-center px-0 w-100 py-3">
-        {collected.map((data) => (
-          <TBook
-            tbsn={data.tbsn}
-            key={data.tbsn}
-            title={data.title}
-            blurb={data.blurb}
-            author={data.author}
-            coverImage={data.coverImage}
-          />
+        {tabItems.map((tab) => (
+          <li key={tab.id} className="nav-item">
+            <a
+              id={tab.id}
+              className={`nav-link ${activeTab === tab.id ? "active" : ""}`}
+              href="#"
+              onClick={() => handleTabClick(tab.id)}
+            >
+              {tab.label}
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
+
+      {activeTab === "collected" ? renderBooks(collectedBooks) : renderBooks(authoredBooks)}
     </div>
   );
 
