@@ -17,7 +17,7 @@ const TopNavbar: React.FC = () => {
   const { isLoggedIn } = useAuth();
   const { isConnected, isConnecting } = useAccount();
 
-  const visibleNavItems = navItems.filter(item => !item.protected || (isConnected || isConnecting) );
+  const visibleNavItems = navItems.filter(item => !item.protected || (isConnected) );
 
   
   return (

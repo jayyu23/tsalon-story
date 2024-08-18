@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useSignMessage, useDisconnect } from 'wagmi';
 import { useAuth } from '../auth/useSessionStorage';
-
-
 
 import axios from "axios";
 import endpoints from "../auth/endpoints";
@@ -14,6 +12,17 @@ const WalletFunction: React.FC = () => {
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
   const { setSession, clearSession, session, isLoggedIn } = useAuth();
+
+  const [milliseconds, setMilliseconds] = useState(0);
+
+  useEffect(() => {
+    const startTime = Date.now();
+    const timer = setInterval(() => {
+      setMilliseconds(Date.now() - startTime);
+    }, 1); // Update every millisecond
+
+    return () => clearInterval(timer); // Cleanup on unmount
+  }, []);
 
   const login = async (address: string) => {
     console.log("Login called");
@@ -54,10 +63,10 @@ const WalletFunction: React.FC = () => {
   }
 
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log(isConnected, address, chain);
-
-    if (isConnecting) {
+    // 1 sec delay for resource load
+    if (isConnecting || milliseconds < 1000) {
       console.log("is connecting...")
       return;
     }
