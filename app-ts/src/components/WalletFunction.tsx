@@ -72,7 +72,7 @@ const WalletFunction: React.FC = () => {
     }
 
     if (session) {
-      if (!isConnected && !isConnecting) {
+      if (!isConnected && !isConnecting || session.address !== address) {
         console.log("Session exists but not connected");
         disconnect();
         clearSession();
