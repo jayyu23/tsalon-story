@@ -1,4 +1,4 @@
-import { createWalletClient, http, parseEther, publicActions, getContract } from 'viem';
+import { createWalletClient, http, formatEther, publicActions, getContract } from 'viem';
 import { sepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import { abi as TBookFactoryABI } from '../../../artifacts/contracts/TBookFactory.sol/TBookFactory.json';
@@ -6,9 +6,11 @@ import { NextFunction } from 'express';
 import { get } from 'lodash';
 
 require('dotenv').config({ path: __dirname + '/../../../.env' });
-console.log('Init - Loading environment variables from %s.', __dirname + '../../../.env');
+// console.log('Init - Loading environment variables from %s.', __dirname + '../../../.env');
 
 // Change this to be auto-updated
+const ETH_USD_API = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ethereum"
+
 const contractAddress = '0x9d79c1feacfc8db2b0d850931262fe2849b30921';
 const walletClient = createWalletClient({
   chain: sepolia,
@@ -90,7 +92,20 @@ const publishTBook = async (req: any, res: any) => {
   }
 }
 
+const getPrice = async (req: any, res: any) => {
+  try {
+    const tbsn = BigInt(req.params.tbsn);
+    const priceWei: any = await tBookFactory.read.getCurrentPrice([tbsn]);
+    const priceETH = formatEther(priceWei);
+    const rate = await fetch(ETH_USD_API).then((response) => response.json());
+    const priceUSD = Number(priceETH) * Number(rate[0].current_price);
+    res.status(200).json({ priceETH: priceETH, priceUSD: priceUSD.toFixed(2) });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}
+
 // TODO: Sync database TBooks with Blockchain TBooks
 
 
-export default { getTBookNFT, getCollection, publishTBook };
+export default { getTBookNFT, getCollection, publishTBook, getPrice };

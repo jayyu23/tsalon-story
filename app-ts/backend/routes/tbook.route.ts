@@ -31,7 +31,7 @@ router.route("/api/nft/:tbsn").get(blockchainController.getTBookNFT);
 
 router.route("/api/publishNFT").post(auth.requireSignin, auth.hasAuthorization, blockchainController.publishTBook);
 
-// router.route("/api/price/:tbsn").get(blockchainController.getPrice);
+router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
 // router.route("/api/testPub").get(tbookController.create);
 

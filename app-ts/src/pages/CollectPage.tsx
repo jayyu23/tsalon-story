@@ -12,6 +12,12 @@ interface RouteParams {
     tbsn: string;
     [key: string]: string | undefined;
 }
+
+interface PriceData {
+  priceETH: string;
+  priceUSD: string
+};
+
 const CollectPage: React.FC = () => {
 
     const { address, isConnected } = useAccount();
@@ -20,16 +26,17 @@ const CollectPage: React.FC = () => {
     const { session, isLoggedIn, login } = useAuth();
     const { signMessageAsync } = useSignMessage();
     const { openConnectModal } = useConnectModal();
+    const [refreshDate, setRefreshDate] = useState(0);
+    const [prices, setPrices] = useState<PriceData>({priceETH: "--", priceUSD: "--"}); // price in ETH
 
     const [isSpinning, setIsSpinning] = useState(false);
 
     const handleRefreshClick = async () => {
         setIsSpinning(true);
-
-        
-        // setTimeout(() => {
-        //   setIsSpinning(false);
-        // }, 2000);
+        setTimeout(async () => {
+          await getPrice();
+          setIsSpinning(false);
+        }, 1000);
       };
 
     const getTBookData = async (tbsn: string) => {
@@ -52,8 +59,25 @@ const CollectPage: React.FC = () => {
       }
     }
 
+    const getPrice = async () => {
+        if (Date.now() - refreshDate < 1000 || !tbsn) {
+          return;
+        }
+        try {
+          const response = await axios.get(endpoints.getPriceAPI(tbsn));
+          const data: PriceData = response.data;
+          setPrices(data);
+          setRefreshDate(Date.now());
+          const priceInput = document.getElementById("payAmount") as HTMLInputElement;
+          priceInput.value = data.priceETH;
+        } catch (error) {
+          console.log("Error getting price: ", error);
+        }
+    }
+
     useEffect(() => {
         getTBookData(tbsn || "0");
+        getPrice();
     }, []);
 
     useEffect(() => {
@@ -65,11 +89,6 @@ const CollectPage: React.FC = () => {
         }
     }, [session]);
 
-
-    const prices = {
-        priceETH: 0.1,
-        priceUSD: 200,
-    }
     const txHash = null;
 
 
@@ -114,10 +133,10 @@ const CollectPage: React.FC = () => {
                     style={{ fontSize: 40, width: 75 }}
                   ></i>
                   <div className="col-3 h3 mx-0 my-auto">
-                    {prices.priceETH || "--"}
+                    {prices ? prices.priceETH : "--"}
                   </div>
-                  <div className="text-muted mx-0 col-3 my-auto">
-                    ${prices.priceUSD || "--"} USD
+                  <div className="text-muted mx-3 col-3 my-auto">
+                    ${prices ? prices.priceUSD : "--"} USD
                   </div>
                   <a
                     className="btn btn-sm btn-primary col-3 my-auto d-flex align-items-center justify-content-center"
@@ -170,7 +189,7 @@ const CollectPage: React.FC = () => {
                       type="number"
                       step="0.001"
                       disabled={!address}
-                      defaultValue={prices.priceETH || 0}
+                      defaultValue={prices ? prices.priceETH : 0}
                     />
                     <button
                       id="buyButton"
