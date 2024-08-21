@@ -12,10 +12,10 @@ interface TBookProps {
 }
 
 const TBook: React.FC<TBookProps> = (props) => {
-  const images = ["blue", "green", "orange", "purple"];
-  const coverImage = `/assets/logo_square_${
-    images[Math.floor(Math.random() * images.length)]
-  }.png`;
+  // const images = ["blue", "green", "orange", "purple"];
+  // const coverImage = `/assets/logo_square_${
+  //   images[Math.floor(Math.random() * images.length)]
+  // }.png`;
 
   const defaultSettings = {
     tbsn: 0,
@@ -64,7 +64,7 @@ const TBook: React.FC<TBookProps> = (props) => {
     <div className="card mx-3 my-4" style={{ width: "25rem" }}>
       <img
         className="card-img-top"
-        src={props.coverImage ? props.coverImage : coverImage}
+        src={props.coverImage ? props.coverImage : "https://placehold.co/400/white/white"}
         alt="TBook Image Cap"
       ></img>
       <div className="card-body d-flex flex-column">

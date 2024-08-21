@@ -58,7 +58,7 @@ const Notifications: React.FC = () => {
             <Sidebar initialActiveItem="Dashboard" />
             </div>
             <div className="flex-grow-1 d-flex flex-column my-0 h-100">
-            <h1 className="my-5 text-center">Welcome, {username}</h1>
+            <h1 className="my-5 text-center">Dashboard</h1>
             {messages.map((data) => (
                 <Notification
                 key={data._id}
