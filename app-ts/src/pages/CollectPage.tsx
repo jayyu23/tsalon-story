@@ -5,8 +5,26 @@ import TBook from "../components/TBook";
 import axios from "axios";
 import endpoints from "../auth/endpoints";
 import { useAuth } from "../auth/useSessionStorage";
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount, useSignMessage, useWriteContract } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { Abi, parseEther } from "viem";
+
+// To be loaded
+const contractAddress = "0x9d79c1feacfc8db2b0d850931262fe2849b30921";
+// const TBookFactoryABI = TBookFactory.abi;
+const TBookFactoryABI: Abi = [{
+  "inputs": [
+    {
+      "internalType": "uint256",
+      "name": "tbsn",
+      "type": "uint256"
+    }
+  ],
+  "name": "mintCopy",
+  "outputs": [],
+  "stateMutability": "payable",
+  "type": "function"
+},];
 
 interface RouteParams {
     tbsn: string;
@@ -25,6 +43,7 @@ const CollectPage: React.FC = () => {
     const [tbookData, setTBookData] = useState<any>(null);
     const { session, isLoggedIn, login } = useAuth();
     const { signMessageAsync } = useSignMessage();
+    const { data: hash, isPending, writeContract } = useWriteContract();
     const { openConnectModal } = useConnectModal();
     const [refreshDate, setRefreshDate] = useState(0);
     const [prices, setPrices] = useState<PriceData>({priceETH: "--", priceUSD: "--"}); // price in ETH
@@ -48,6 +67,7 @@ const CollectPage: React.FC = () => {
     const buyAction = async () => {
       if (isLoggedIn && isConnected) {
         console.log("Buy login!!");
+        mintNFT();
         return
       } else {
         console.log("Not Logged In");
@@ -58,6 +78,25 @@ const CollectPage: React.FC = () => {
         }
       }
     }
+
+    const mintNFT = async () => {
+      console.log("Minting NFT");
+      const price = document.getElementById("payAmount") as HTMLInputElement;
+      console.log("Price: ", parseEther(price.value), tbsn);
+      try {
+        writeContract({
+          address: contractAddress,
+          abi: TBookFactoryABI,
+          functionName: 'mintCopy',
+          args: [BigInt(tbsn || "1")],
+          value: parseEther(price.value),
+        });
+      } catch (error) {
+        console.log("Error minting NFT: ", error);
+      }
+
+    }
+
 
     const getPrice = async () => {
         if (Date.now() - refreshDate < 1000 || !tbsn) {
@@ -206,7 +245,7 @@ const CollectPage: React.FC = () => {
                       href={"#"}
                       style={{ fontSize: 14 }}
                     >
-                      {txHash ? "Receipt: " + txHash : ""}
+                      {hash && <div>Transaction Hash: {hash}</div>}
                     </a>
                   </div>
                   </div>
