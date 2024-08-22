@@ -1,9 +1,11 @@
-import { createWalletClient, http, formatEther, publicActions, getContract } from 'viem';
+import { createWalletClient, http, formatEther, publicActions, getContract, Transport } from 'viem';
 import { sepolia } from 'viem/chains';
-import { privateKeyToAccount } from 'viem/accounts';
+import { privateKeyToAccount, Account, Address } from 'viem/accounts';
 import { abi as TBookFactoryABI } from '../../../artifacts/contracts/TBookFactory.sol/TBookFactory.json';
 import { NextFunction } from 'express';
 import { get } from 'lodash';
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { registerIPAsset } from './test';
 
 require('dotenv').config({ path: __dirname + '/../../../.env' });
 // console.log('Init - Loading environment variables from %s.', __dirname + '../../../.env');
@@ -12,11 +14,24 @@ require('dotenv').config({ path: __dirname + '/../../../.env' });
 const ETH_USD_API = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ethereum"
 
 const contractAddress = '0x9d79c1feacfc8db2b0d850931262fe2849b30921';
+const account: Account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY}`);
+const transport: Transport = http(`https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`)
+
+
 const walletClient = createWalletClient({
   chain: sepolia,
-  account: privateKeyToAccount(`0x${process.env.PRIVATE_KEY}`),
-  transport: http(`https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`),
+  account: account,
+  transport: transport,
 }).extend(publicActions);
+
+const storyConfig = {
+  transport: transport,
+  chain: sepolia,
+  wallet: walletClient,
+  account: account,
+};
+
+const storyClient = StoryClient.newClient(storyConfig);
 
 const tBookFactory = getContract({
   address: contractAddress,
@@ -108,4 +123,16 @@ const getPrice = async (req: any, res: any) => {
 // TODO: Sync database TBooks with Blockchain TBooks
 
 
-export default { getTBookNFT, getCollection, publishTBook, getPrice };
+// Story
+const registerStoryIP = async (req: any, res: any) => {
+  const response = await registerIPAsset();
+  // const response = await storyClient.ipAsset.register({
+  //   nftContract: contractAddress,
+  //   tokenId: "750070000",
+  //   // txOptions: { waitForTransaction: true },
+  // });
+  // console.log(`Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`);
+  res.status(200).json({ message: `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}` });
+}
+
+export default { getTBookNFT, getCollection, publishTBook, getPrice, registerStoryIP };
