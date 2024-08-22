@@ -35,7 +35,7 @@ router.route("/api/price/:tbsn").get(blockchainController.getPrice);
 
 // router.route("/api/testPub").get(tbookController.create);
 
-router.route("/api/testStory").get(blockchainController.registerStoryIP);
+router.route("/api/registerStoryIP").post(blockchainController.registerStoryIP);
 
 router.param("username", tbookController.getFromUsername);
 router.param("tbsn", tbookController.getFromTBSN);

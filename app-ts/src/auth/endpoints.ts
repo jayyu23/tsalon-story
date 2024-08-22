@@ -23,6 +23,7 @@ class EndPoints {
         isUserHolder: "userHolder",
         getGreenTokens: "getGreenTokens",
         getNonceAPI: "getNonce",
+        registerStoryIP: "registerStoryIP",
       };
     }
     
@@ -86,6 +87,10 @@ class EndPoints {
     }
     getGreenTokensAPI() {
       return this.baseURL + this.urlMap.getGreenTokens;
+    }
+
+    getRegisterStoryAPI() {
+      return this.baseURL + this.urlMap.registerStoryIP;
     }
   }
   

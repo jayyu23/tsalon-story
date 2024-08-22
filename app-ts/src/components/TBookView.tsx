@@ -30,6 +30,16 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
   };
 
   const [data, setData] = useState<TBookContent>(defaultSettings);
+  const [storyData, setStoryData] = useState<any>(null);
+
+  const getStoryIP = async (tbsn: string) => {
+    const endpoint = endpoints.getRegisterStoryAPI();
+    const response = await axios.post(endpoint, { tbsn, copyNumber: 0 });
+    console.log(response.data);
+    setStoryData(response.data.response);
+  }
+
+  const storyExplorer = "https://explorer.story.foundation/ipa/"
 
   useEffect(() => {
     if (props.is_local) {
@@ -41,9 +51,12 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
       axios.get(endpoint).then((res) => {
         setData(res.data);
       });
+      getStoryIP(tbsn || "");
     }
   
   }, [props.is_local, props.data]);
+
+
 
   return (
     <div>
@@ -71,6 +84,8 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
           >
             <ReactMarkdown>{data.content}</ReactMarkdown>
           </div>
+          {storyData && <div className="text-secondary mb-5">Registered as Story IP Asset: <br/>
+            <a className="link-secondary" href={storyExplorer + storyData.ipId}>{storyData.ipId}</a></div>}
         </div>
       </div>
     </div>

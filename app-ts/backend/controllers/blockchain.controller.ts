@@ -2,10 +2,7 @@ import { createWalletClient, http, formatEther, publicActions, getContract, Tran
 import { sepolia } from 'viem/chains';
 import { privateKeyToAccount, Account, Address } from 'viem/accounts';
 import { abi as TBookFactoryABI } from '../../../artifacts/contracts/TBookFactory.sol/TBookFactory.json';
-import { NextFunction } from 'express';
-import { get } from 'lodash';
-import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
-import { registerIPAsset } from './test';
+import { registerIPAsset } from './story.controller';
 
 require('dotenv').config({ path: __dirname + '/../../../.env' });
 // console.log('Init - Loading environment variables from %s.', __dirname + '../../../.env');
@@ -24,15 +21,6 @@ const walletClient = createWalletClient({
   transport: transport,
 }).extend(publicActions);
 
-const storyConfig = {
-  transport: transport,
-  chain: sepolia,
-  wallet: walletClient,
-  account: account,
-};
-
-const storyClient = StoryClient.newClient(storyConfig);
-
 const tBookFactory = getContract({
   address: contractAddress,
   abi: TBookFactoryABI,
@@ -50,6 +38,7 @@ const toTBookJSON = (tBook: TBook) => {
   };
 }
 
+// Get TBook NFT
 const getTBookNFT = async (req: any, res: any) => {
   try {
     const tbsn = BigInt(req.params.tbsn);
@@ -61,10 +50,12 @@ const getTBookNFT = async (req: any, res: any) => {
   }
 }
 
+// Get TBSN and Copy Number from TBook ID
 const getTBSNCopy = (id: bigint) => {
   return { tbsn: (id / BigInt(10000)).toString(), copyNumber: (id % BigInt(10000)).toString() };
 }
 
+// Gets both collection and authored TBooks
 const getCollection = async (address: string) => {
   console.log("Getting collection for address", address);
   const tBooks: any = await tBookFactory.read.getOwnedTBooks([address]);
@@ -78,9 +69,6 @@ const getCollection = async (address: string) => {
     authored: authoredTBooks.map((tBook: bigint) => tBook.toString()),
   };
 }
-
-// TODO: getAuthoredTBooks
-
 
 // TODO: getAllTBooks
 type PublishFields = { tbsn: number, address: string, copies: number };
@@ -123,16 +111,19 @@ const getPrice = async (req: any, res: any) => {
 // TODO: Sync database TBooks with Blockchain TBooks
 
 
-// Story
+// Register TBook NFT as IP Asset
 const registerStoryIP = async (req: any, res: any) => {
-  const response = await registerIPAsset();
-  // const response = await storyClient.ipAsset.register({
-  //   nftContract: contractAddress,
-  //   tokenId: "750070000",
-  //   // txOptions: { waitForTransaction: true },
-  // });
-  // console.log(`Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`);
-  res.status(200).json({ message: `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}` });
+  if (!req.body.tbsn) {
+    res.status(400).json({ error: "Missing tbsn"});
+    return;
+  }
+  try {
+    const tokenId = BigInt(req.body.tbsn) * BigInt(10000) + BigInt(req.body.copyNumber);
+    const response = await registerIPAsset(tokenId.toString(), contractAddress);
+    res.status(200).json({ response });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 }
 
 export default { getTBookNFT, getCollection, publishTBook, getPrice, registerStoryIP };
