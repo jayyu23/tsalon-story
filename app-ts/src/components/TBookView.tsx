@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import parse from 'html-react-parser';
 import ReactMarkdown from 'react-markdown';
 import axios from "axios";
 import endpoints from "../auth/endpoints";
+import StoryIPComponent from "./StoryIP";
 
 
 interface TBookViewProps {
@@ -56,8 +55,6 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
   
   }, [props.is_local, props.data]);
 
-
-
   return (
     <div>
       <div className="justify-content-center mt-5">
@@ -84,8 +81,7 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
           >
             <ReactMarkdown>{data.content}</ReactMarkdown>
           </div>
-          {storyData && <div className="text-secondary mb-5">Registered as Story IP Asset: <br/>
-            <a className="link-secondary" href={storyExplorer + storyData.ipId}>{storyData.ipId}</a></div>}
+          <StoryIPComponent tbsn={props.tbsn || ""} />
         </div>
       </div>
     </div>
@@ -93,24 +89,3 @@ const TBookView: React.FC<TBookViewProps> = (props) => {
 };
 
 export default TBookView;
-
-
-
-  // useEffect(() => {
-  //   const res = (acc: any) => {
-  //     const data: TBookContent = acc.data;
-  //     setPub(data);
-  //   };
-  //   const err = (rej: any) => {
-  //     console.log(rej);
-  //     window.location.href = "/error";
-  //   };
-
-  //   if (props.mode === "draft") {
-  //     if (props.draftContent) {
-  //       setPub(props.draftContent);
-  //     }
-  //   } else {
-  //     // axios.get(endpoints.getPublicationAPI(tbsn)).then(res, err);
-  //   }
-  // }, [props.mode, props.draftContent, tbsn]);

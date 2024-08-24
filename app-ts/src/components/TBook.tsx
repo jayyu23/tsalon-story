@@ -93,8 +93,8 @@ const TBook: React.FC<TBookProps> = (props) => {
         <a
           className="card-text font-italic my-3"
           href={
-            "/profile/" + props.author + "/tbooks"
-            // props.author ? "/profile/" + endpoints.getLink(props.author) : "#"
+            // "/profile/" + props.author + "/tbooks"
+            "#"
           }
           style={{ textDecoration: "underline", fontWeight: "normal" }}
         >

@@ -8,6 +8,7 @@ import { useAuth } from "../auth/useSessionStorage";
 import { useAccount, useSignMessage, useWriteContract } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Abi, parseEther } from "viem";
+import StoryIPComponent from "../components/StoryIP";
 
 // To be loaded
 const contractAddress = "0x9d79c1feacfc8db2b0d850931262fe2849b30921";
@@ -43,10 +44,11 @@ const CollectPage: React.FC = () => {
     const [tbookData, setTBookData] = useState<any>(null);
     const { session, isLoggedIn, login } = useAuth();
     const { signMessageAsync } = useSignMessage();
-    const { data: hash, isPending, writeContract } = useWriteContract();
+    const { data: hash, error: writeError, isPending, writeContract } = useWriteContract();
     const { openConnectModal } = useConnectModal();
     const [refreshDate, setRefreshDate] = useState(0);
     const [prices, setPrices] = useState<PriceData>({priceETH: "--", priceUSD: "--"}); // price in ETH
+    const [buyError, setBuyError] = useState("");
 
     const [isSpinning, setIsSpinning] = useState(false);
 
@@ -64,9 +66,8 @@ const CollectPage: React.FC = () => {
         setTBookData(data);
     }
 
-    const buyAction = async () => {
+    const collectAction = async () => {
       if (isLoggedIn && isConnected) {
-        console.log("Buy login!!");
         mintNFT();
         return
       } else {
@@ -84,15 +85,16 @@ const CollectPage: React.FC = () => {
       const price = document.getElementById("payAmount") as HTMLInputElement;
       console.log("Price: ", parseEther(price.value), tbsn);
       try {
-        writeContract({
+        const response = writeContract({
           address: contractAddress,
           abi: TBookFactoryABI,
           functionName: 'mintCopy',
           args: [BigInt(tbsn || "1")],
           value: parseEther(price.value),
         });
-      } catch (error) {
+      } catch (error: any) {
         console.log("Error minting NFT: ", error);
+        setBuyError(error.message);
       }
 
     }
@@ -128,9 +130,6 @@ const CollectPage: React.FC = () => {
         }
     }, [session]);
 
-    const txHash = null;
-
-
     return (
       <div className='vw-100 vh-100 d-flex flex-column'>
           <NavBar />
@@ -164,6 +163,7 @@ const CollectPage: React.FC = () => {
                     // data-icon="bxs:badge-check"
                   ></i>{" "}
                 </div>
+                <StoryIPComponent tbsn={tbsn || ""} />
                 <p className="h6 text-muted">Current Floor Price</p>
                 <div className="container d-flex flex-row my-4 justify-content-center">
                   <i
@@ -171,7 +171,7 @@ const CollectPage: React.FC = () => {
                     data-icon="mdi:ethereum"
                     style={{ fontSize: 40, width: 75 }}
                   ></i>
-                  <div className="col-3 h3 mx-0 my-auto">
+                  <div className="col-3 h3 mx-0 my-auto" id="payAmount">
                     {prices ? prices.priceETH : "--"}
                   </div>
                   <div className="text-muted mx-3 col-3 my-auto">
@@ -192,63 +192,25 @@ const CollectPage: React.FC = () => {
                   </a>
                 </div>
                 <button
-                  className="btn btn-warning dropdown-toggle w-100"
+                  className={`btn btn-${isLoggedIn && isConnected ? 'success' : 'warning'} w-100`}
                   type="button"
                   style={{ borderRadius: 25, fontSize: 20 }}
-                  data-bs-toggle="collapse"
-                  data-bs-target="#checkoutCollapse"
-                  aria-expanded="false"
-                  aria-controls="#checkoutCollapse"
+                  onClick={collectAction}
                 >
                   <i
                     className="fa fa-book-bookmark mx-3"
                     style={{ fontSize: 20 }}
                   ></i>
-                  Collect
+                  {isLoggedIn && isConnected ? "Collect" : "Login"}
                 </button>
-                <div className="collapse" id="checkoutCollapse">
-                  <p className="h5 mb-3 mt-5">Receiving Address</p>
-                  <input
-                    id="receiveAddress"
-                    disabled={!address}
-                    className="form form-control"
-                    type="text"
-                    defaultValue={address || ""}
-                  />
-                  <p className="h5 mb-3 mt-5">Payment Amount</p>
-                  <div className="row w-100">
-                    <i
-                      className="iconify text-center my-auto"
-                      data-icon="mdi:ethereum"
-                      style={{ fontSize: 20, width: 50 }}
-                    ></i>
-                    <input
-                      id="payAmount"
-                      className="form form-control col-6 w-50"
-                      type="number"
-                      step="0.001"
-                      disabled={!address}
-                      defaultValue={prices ? prices.priceETH : 0}
-                    />
-                    <button
-                      id="buyButton"
-                      className={`btn btn-${isLoggedIn && isConnected ? 'success' : 'warning'} w-25 mx-auto px-0`}
-                      style={{ borderRadius: 25 }}
-                      onClick={buyAction}
-                    >
-                      {isLoggedIn && isConnected ? "Buy" : "Login"}
-                    </button>
-                    {/* <p className="text-danger my-3 mx-3">{buyError}</p>
-                    <p className="text-success my-3 mx-3">{buyStatus}</p> */}
-                    <a
-                      className="text-muted my-3 mx-3"
+                {writeError ? <p className="text-danger my-3 mx-3">Transaction Error: {writeError?.message.split('.')[0]}</p> : <></>}
+                {/* <a className="text-muted my-3 mx-3"
                       href={"#"}
                       style={{ fontSize: 14 }}
-                    >
+                >
                       {hash && <div>Transaction Hash: {hash}</div>}
-                    </a>
-                  </div>
-                  </div>
+                    </a> */}
+                
                 </div>
               </div>
             </div>
