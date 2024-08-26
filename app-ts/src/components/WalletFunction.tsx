@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useSignMessage, useDisconnect } from 'wagmi';
-import { useAuth } from '../auth/useSessionStorage';
+import { useAuth } from '../auth/useAuth';
 
 // import axios from "axios";
 // import endpoints from "../auth/endpoints";

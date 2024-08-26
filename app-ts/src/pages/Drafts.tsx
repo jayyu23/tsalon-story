@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import AuthWrapper from "../components/AuthWrapper";
 import TBookDraft from "../components/TBookDraft";
-import { useAuth } from "../auth/useSessionStorage";
+import { useAuth } from "../auth/useAuth";
 import endpoints from "../auth/endpoints";
 import axios from "axios";
 

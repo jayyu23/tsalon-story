@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './navbar.css';
 import WalletFunction from './WalletFunction'; // Import the new WalletFunction component
 import { useAccount } from 'wagmi';
-import { useAuth } from '../auth/useSessionStorage';
+import { useAuth } from '../auth/useAuth';
 
 const navItems = [
   { name: 'Home', path: '/' },

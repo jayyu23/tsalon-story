@@ -4,7 +4,7 @@ import NavBar from "../components/Navbar";
 import TBook from "../components/TBook";
 import axios from "axios";
 import endpoints from "../auth/endpoints";
-import { useAuth } from "../auth/useSessionStorage";
+import { useAuth } from "../auth/useAuth";
 import { useAccount, useSignMessage, useWriteContract } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Abi, parseEther } from "viem";
@@ -204,13 +204,9 @@ const CollectPage: React.FC = () => {
                   {isLoggedIn && isConnected ? "Collect" : "Login"}
                 </button>
                 {writeError ? <p className="text-danger my-3 mx-3">Transaction Error: {writeError?.message.split('.')[0]}</p> : <></>}
-                {/* <a className="text-muted my-3 mx-3"
-                      href={"#"}
-                      style={{ fontSize: 14 }}
-                >
+                {hash ? <a className="text-secondary my-3 mx-3" href={`https://sepolia.etherscan.io/tx/${hash}`}>
                       {hash && <div>Transaction Hash: {hash}</div>}
-                    </a> */}
-                
+                    </a> : <></>}
                 </div>
               </div>
             </div>

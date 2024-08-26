@@ -6,6 +6,7 @@ import Notification from "../components/Notification";
 import axios from "axios";
 import endpoints from "../auth/endpoints";
 import AuthWrapper from "../components/AuthWrapper";
+import { useAuth } from "../auth/useAuth";
 
 interface Message {
   _id?: string;
@@ -17,36 +18,38 @@ interface Message {
 
 const Notifications: React.FC = () => {
 
-  const username = "Alice";
-  const sampleMessages: Message[] = [
-    {
-      _id: "1",
-      title: "Welcome to TSalon",
-      fromName: "TSalon",
-      body: "Welcome to TSalon! We hope you enjoy your stay.",
-      date: new Date().toISOString(),
-    },
-];
+//   const sampleMessages: Message[] = [
+//     {
+//       _id: "1",
+//       title: "Welcome to TSalon",
+//       fromName: "TSalon",
+//       body: "Welcome to TSalon! We hope you enjoy your stay.",
+//       date: new Date().toISOString(),
+//     },
+// ];
 
-  const [messages, setMessages] = useState<Message[]>(sampleMessages);
-  // const [username, setUsername] = useState<string>(auth.getUsername());
+  const [messages, setMessages] = useState<Message[]>([]);
+  const { session, getAuthData } = useAuth();
 
   useEffect(() => {
-    // const authData = auth.getPostAuthData();
-    // axios
-    //   .post(
-    //     endpoints.getMessagesAPI(auth.getUsername()),
-    //     authData.body,
-    //     authData.config
-    //   )
-    //   .then(
-    //     (response) => {
-    //       setMessages(response.data.messages);
-    //     },
-    //     (error) => {
-    //       console.log(error);
-    //     }
-    //   );
+
+    const authData = getAuthData();
+    const address: string = session?.address || "";
+    axios
+      .post(
+        endpoints.getMessagesAPI(address),
+        authData.body,
+        authData.config
+      )
+      .then(
+        (response) => {
+          setMessages(response.data.messages);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+
   }, []);
 
   return (

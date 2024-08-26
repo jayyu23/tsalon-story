@@ -1,7 +1,12 @@
 import tsalonmessageModel from "../models/tsalonmessage.model";
 
 const reviewMessage: string = "Congratulations! Your draft has successfully been submitted for review. When enough peer Salonites have voted for your work, your writing will be published publicly as a TBook.";
-const welcomeMessage: string = "Welcome to TSalon! TSalon is a pioneering Web 3 Publishing House, dedicated to producing quality writing and allowing authors to capture the value of their works. To become a fully-fledged Salonite and community member, begin by collecting one of the TBook NFTs available in the TBookstore by clicking 'Explore'. Enjoy :)";
+
+const publishMessage = (tbsn: string) => {
+    return `Congratulations! Your TBook ${tbsn} has been published. You can now view it in the TBookstore by clicking 'Explore'.`;
+}
+
+const welcomeMessage: string = "Welcome to TSalon! TSalon is a pioneering Web3 Publishing House dedicated to creating a co-creation community of writers and readers. TSalon is built on the Ethereum blockchain using Story Protocol to mint stories as NFTs";
 
 import { Request, Response, NextFunction } from "express";
 
@@ -44,4 +49,4 @@ const getMessages = (req: Request, res: Response, next: NextFunction): void => {
         });
 };
 
-export default { sendMessage, logMessage, getMessages, reviewMessage, welcomeMessage };
+export default { sendMessage, logMessage, getMessages, publishMessage, reviewMessage, welcomeMessage };

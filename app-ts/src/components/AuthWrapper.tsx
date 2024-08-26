@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../auth/useSessionStorage";
+import { useAuth } from "../auth/useAuth";
 import { useAccount } from "wagmi";
 import Nologin from "./Nologin";
 

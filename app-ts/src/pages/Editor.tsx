@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar';
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import endpoints from '../auth/endpoints';
-import { useAuth } from '../auth/useSessionStorage';
+import { useAuth } from '../auth/useAuth';
 import AuthWrapper from '../components/AuthWrapper';
 import TBookView from '../components/TBookView';
 import ImageCropper from '../components/ImageCropper';
@@ -153,7 +153,7 @@ const EditorPreview: React.FC = () => {
       copies: '1000'
     };
     axios.post(endpoints.getDraftSubmitAPI(), body, auth.config);
-    navigate("/drafts");
+    navigate("/dashboard");
   };
 
   const previewData = {

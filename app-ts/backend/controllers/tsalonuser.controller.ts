@@ -8,7 +8,7 @@ import { verifyMessage } from 'viem'
 // import config from '../../config/config';
 import blockchainController from './blockchain.controller';
 import tbookModel from '../models/tbook.model';
-// import tsalonmessageController from './tsalonmessage.controller';
+import tsalonmessageController from './tsalonmessage.controller';
 
 interface AuthRequest extends Request {
     auth?: {
@@ -43,6 +43,8 @@ const getNonce = (req: Request, res: Response) => {
             if (acc.length === 0) {
                 tsalonuserModel.create({ walletAddress: address, nonceMessage: nonceMessage, username: address }).then(
                     (acc) => {
+                        tsalonmessageController.logMessage(address, "TSalon", 'Welcome to TSalon!', 
+                            tsalonmessageController.welcomeMessage, new Date());
                         res.json({ nonce: nonceMessage });
                     },
                     (rej) => {
@@ -83,7 +85,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
                 message: nonce,
                 signature,
             });
-            console.log('verified', verified);
             if (!verified) {
                 return res.status(400).json({ error: 'Login error' });
             }
@@ -91,7 +92,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
                 { address: address },
                 config.jwtSecret
             );
-            console.log('token', token);
             res.cookie('t', token, { expires: new Date(Date.now() + 9999) });
             return res.status(200).json({
                 token,

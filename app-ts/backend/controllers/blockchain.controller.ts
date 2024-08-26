@@ -89,7 +89,8 @@ const publishTBook = async (req: any, res: any) => {
   try {
     const fields: PublishFields = { tbsn: req.body.tbsn, address: req.body.walletAddress, copies: req.body.copies };
     const tx = await publishTBookNFT(fields);
-    return tx;
+    // const storyIPA = await registerIPAsset(getTokenID(req.body.tbsn, "0").toString(), contractAddress);
+    return { tx };
   } catch (error) {
     throw error;
   }
@@ -111,6 +112,10 @@ const getPrice = async (req: any, res: any) => {
 // TODO: Sync database TBooks with Blockchain TBooks
 
 
+const getTokenID = (tbsn: string, copyNumber: string) => {
+  return BigInt(tbsn) * BigInt(10000) + BigInt(copyNumber);
+}
+
 // Register TBook NFT as IP Asset
 const registerStoryIP = async (req: any, res: any) => {
   if (!req.body.tbsn) {
@@ -118,7 +123,7 @@ const registerStoryIP = async (req: any, res: any) => {
     return;
   }
   try {
-    const tokenId = BigInt(req.body.tbsn) * BigInt(10000) + BigInt(req.body.copyNumber);
+    const tokenId = getTokenID(req.body.tbsn, req.body.copyNumber);
     const response = await registerIPAsset(tokenId.toString(), contractAddress);
     res.status(200).json({ response });
   } catch (error) {
@@ -126,4 +131,4 @@ const registerStoryIP = async (req: any, res: any) => {
   }
 }
 
-export default { getTBookNFT, getCollection, publishTBook, getPrice, registerStoryIP };
+export default { getTBookNFT, getCollection, publishTBook, getPrice, registerStoryIP, contractAddress };

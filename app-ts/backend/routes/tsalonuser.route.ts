@@ -1,7 +1,6 @@
 import express from "express";
-// import tsalonmessageController from "../controllers/tsalonmessage.controller";
+import tsalonmessageController from "../controllers/tsalonmessage.controller";
 import tsalonuserController from "../controllers/tsalonuser.controller";
-import blockchainController from "../controllers/blockchain.controller";
 
 const router = express.Router();
 
@@ -26,8 +25,8 @@ router.route("/api/userHolder").post(
 
 router.route("/api/profile/:username").get(tsalonuserController.getCollection)
 // router.route("/api/getGreenTokens").post(tsalonuserController.requireSignin, tsalonuserController.hasAuthorization, tsalonuserController.getGreenTokens);
-// router.route("/api/messages/:username").post(tsalonuserController.requireSignin, tsalonuserController.hasAuthorization,
-//   tsalonmessageController.getMessages)
+router.route("/api/messages/:username").post(tsalonuserController.requireSignin, tsalonuserController.hasAuthorization,
+  tsalonmessageController.getMessages)
 
 // router.param("username", tsalonuserController.getAddressFromUsername);
 

@@ -3,7 +3,7 @@ import NavBar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import UserCollection from "../components/Collection";
 import AuthWrapper from "../components/AuthWrapper";
-import { useAuth } from "../auth/useSessionStorage";
+import { useAuth } from "../auth/useAuth";
 
 const PrivateShelf: React.FC = () => {
   const { session } = useAuth();

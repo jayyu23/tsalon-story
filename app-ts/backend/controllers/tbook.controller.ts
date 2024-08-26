@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import tbookModel from '../models/tbook.model';
-// import tsalonmessageController from './tsalonmessage.controller';
+import tsalonmessageController from './tsalonmessage.controller';
 import tsalonuserModel from '../models/tsalonuser.model';
 import blockchainController from './blockchain.controller';
 
@@ -156,18 +156,17 @@ const submitForReview = async (req: Request, res: Response) => {
             if (acc) {
                 // tsalonuserModel.findOneAndUpdate({ username: acc.author }, { $inc: { greenTokens: -1 } }).exec();
                 // Publish onto the Blockchain
-                const tx = await blockchainController.publishTBook(req, res);
-
-                // blockchainController.publish(tbsn);
-                // tsalonmessageController.logMessage(
-                //     acc.author,
-                //     'TSalon',
-                //     `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
-                //     `Congratulations! Your writing "${acc.title}" has been self-published as TBook #${tbsn}. 
-                //      As the author, you will receive a free mint of the NFT. Users can view this TBook publicly at tsalon.io/view/${tbsn}`,
-                //     new Date()
-                // );
-                return res.status(200).json({ success: true, tx });
+                const publishResponse = await blockchainController.publishTBook(req, res);
+                tsalonmessageController.logMessage(
+                    acc.author,
+                    'TSalon',
+                    `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
+                    `Congratulations! Your writing "${acc.title}" has been as TBook #${tbsn}.
+                     As the author, you will receive a free mint of the NFT. Users can view this TBook publicly on the TBookstore \n\n
+                     Transaction hash: ${publishResponse.tx}`,
+                    new Date()
+                );
+                return res.status(200).json({ success: true, publishResponse });
             } else {
                 return res.status(400).json({ success: false, message: 'Update failed' });
             }
