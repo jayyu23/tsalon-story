@@ -141,7 +141,7 @@ const EditorPreview: React.FC = () => {
     setIsPreview(false);
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
 
     const post = getPostData();
     const auth = getAuthData();
@@ -152,7 +152,8 @@ const EditorPreview: React.FC = () => {
       pubMode: 'green',
       copies: '1000'
     };
-    axios.post(endpoints.getDraftSubmitAPI(), body, auth.config);
+    const response = await axios.post(endpoints.getDraftSubmitAPI(), body, auth.config);
+    // wait for the post to be saved
     navigate("/dashboard");
   };
 

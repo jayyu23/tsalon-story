@@ -1,4 +1,5 @@
 import React from "react";
+import StoryIPComponent from "./StoryIP";
 // import endpoints from "../auth/endpoints";
 
 interface TBookProps {
@@ -9,6 +10,7 @@ interface TBookProps {
   link?: string;
   coverImage?: string;
   short?: boolean;
+  hideIP?: boolean;
 }
 
 const TBook: React.FC<TBookProps> = (props) => {
@@ -74,32 +76,24 @@ const TBook: React.FC<TBookProps> = (props) => {
         <h5 className="card-title">
           {props.title ? props.title : defaultSettings.title}
         </h5>
+        { props.hideIP ? <></> : <StoryIPComponent tbsn={props.tbsn ? props.tbsn : ""} />}
         <a
-          className="mt-3"
+          className="mt-3 dropdown-toggle"
           data-bs-toggle="collapse"
           role="button"
           aria-expanded="false"
           aria-controls={"collapseBlurb" + props.tbsn}
           href={"#collapseBlurb" + props.tbsn}
         >
-          <i id={"aboutIcon"} className="fa-solid fa-book mx-2"></i>
+          <i id={"aboutIcon"} className="fa-solid fa-book mx-2 mb-4"></i>
           About
         </a>
         <div className="collapse" id={"collapseBlurb" + props.tbsn}>
-          <p className="card-text">
+          <p className="card-text pb-4 mt-0">
+            Author: {props.author ? props.author : defaultSettings.author} <br/><br/>
             {props.blurb ? props.blurb : defaultSettings.blurb}
           </p>
         </div>
-        <a
-          className="card-text font-italic my-3"
-          href={
-            // "/profile/" + props.author + "/tbooks"
-            "#"
-          }
-          style={{ textDecoration: "underline", fontWeight: "normal" }}
-        >
-          By {props.author ? props.author : defaultSettings.author}
-        </a>
         {props.short ? readHTML : readCollectHTML}
       </div>
     </div>

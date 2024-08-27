@@ -14,7 +14,7 @@ const Notification: React.FC<NotificationProps> = ({
   body,
 }) => {
   return (
-    <div>
+    <div className="my-4">
       <div
         className="card m-auto w-75 p-3 justify-content-center"
         style={{ borderRadius: 25 }}

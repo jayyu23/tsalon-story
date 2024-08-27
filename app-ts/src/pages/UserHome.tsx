@@ -18,15 +18,15 @@ interface Message {
 
 const Notifications: React.FC = () => {
 
-//   const sampleMessages: Message[] = [
-//     {
-//       _id: "1",
-//       title: "Welcome to TSalon",
-//       fromName: "TSalon",
-//       body: "Welcome to TSalon! We hope you enjoy your stay.",
-//       date: new Date().toISOString(),
-//     },
-// ];
+  const sampleMessages: Message[] = [
+    {
+      _id: "1",
+      title: "Welcome to TSalon",
+      fromName: "TSalon",
+      body: "Welcome to TSalon! We hope you enjoy your stay.",
+      date: new Date().toISOString(),
+    },
+];
 
   const [messages, setMessages] = useState<Message[]>([]);
   const { session, getAuthData } = useAuth();
@@ -43,7 +43,13 @@ const Notifications: React.FC = () => {
       )
       .then(
         (response) => {
-          setMessages(response.data.messages);
+          console.log(response.data);
+          if (response.data.messages.length !== 0) {
+            setMessages(response.data.messages);
+          } else {
+            setMessages(sampleMessages);
+          }
+        
         },
         (error) => {
           console.log(error);

@@ -22,23 +22,7 @@ const TBookDraft: React.FC<TBookDraftProps> = (props) => {
   const { getAuthData } = useAuth();
 
   const handleContinue = () => {
-    console.log('loading API');
-    // const endpoint = endpoints.getDraftAPI(tbsn.toString());
-    // const authData = getAuthData();
-    // console.log(endpoint, authData);
-    // axios.get(endpoint, authData.config)
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     const draft = response.data;
-        
-    //     // setMarkdown(draft.content);
-    //     // setTitle(draft.title);
-    //     // setBlurb(draft.blurb);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-
+    // API loaded in editor
     navigate('/editor', { state: { tbsn: tbsn.toString(), loadAPI: true } });
   };
 

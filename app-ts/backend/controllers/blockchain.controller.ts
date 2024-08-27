@@ -2,7 +2,7 @@ import { createWalletClient, http, formatEther, publicActions, getContract, Tran
 import { sepolia } from 'viem/chains';
 import { privateKeyToAccount, Account, Address } from 'viem/accounts';
 import { abi as TBookFactoryABI } from '../../../artifacts/contracts/TBookFactory.sol/TBookFactory.json';
-import { registerIPAsset } from './story.controller';
+import { registerIPAsset, registerIPDerivative } from './story.controller';
 
 require('dotenv').config({ path: __dirname + '/../../../.env' });
 // console.log('Init - Loading environment variables from %s.', __dirname + '../../../.env');
@@ -124,9 +124,17 @@ const registerStoryIP = async (req: any, res: any) => {
   }
   try {
     const tokenId = getTokenID(req.body.tbsn, req.body.copyNumber);
-    const response = await registerIPAsset(tokenId.toString(), contractAddress);
-    res.status(200).json({ response });
+    if (req.body.copyNumber == "0") {
+      const response = await registerIPAsset(tokenId.toString(), contractAddress);
+      res.status(200).json({ response });
+    } else {
+      // Register as Derivative
+      const parentTokenId = getTokenID(req.body.tbsn, "0");
+      const response = await registerIPDerivative(tokenId.toString(), parentTokenId.toString(), contractAddress);
+      res.status(200).json({ response });
+    }
   } catch (error) {
+    console.log("Error registering IP: ", error);
     res.status(500).json({ error });
   }
 }

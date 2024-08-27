@@ -160,7 +160,7 @@ const submitForReview = async (req: Request, res: Response) => {
                 tsalonmessageController.logMessage(
                     acc.author,
                     'TSalon',
-                    `Draft #${acc.tbsn} – "${acc.title}" Self-Published`,
+                    `Draft #${acc.tbsn} – "${acc.title}" Published`,
                     `Congratulations! Your writing "${acc.title}" has been as TBook #${tbsn}.
                      As the author, you will receive a free mint of the NFT. Users can view this TBook publicly on the TBookstore \n\n
                      Transaction hash: ${publishResponse.tx}`,

@@ -140,6 +140,7 @@ const CollectPage: React.FC = () => {
               <TBook
                 tbsn={tbsn}
                 short={true}
+                hideIP={true}
                 title={tbookData?.title}
                 link={"/view/" + tbsn}
                 blurb={tbookData?.blurb}
