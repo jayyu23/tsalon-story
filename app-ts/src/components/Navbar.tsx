@@ -7,7 +7,7 @@ import { useAuth } from '../auth/useAuth';
 
 const navItems = [
   { name: 'Home', path: '/' },
-  { name: 'About', path: 'https://github.com/jayyu23/tsalon-story' },
+  { name: 'About', path: 'https://github.com/jayyu23/tsalon-story/blob/main/THESIS.md' },
   { name: 'Dashboard', path: '/dashboard', protected: true },
 ];
 
